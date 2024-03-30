@@ -6,14 +6,33 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class ABC345A {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        String s = scanner.next();
+        if (s.charAt(0) != '<') {
+            out.println("No");
+            return;
+        }
+        if (s.charAt(s.length() - 1) != '>') {
+            out.println("No");
+            return;
+        }
+        if (s.length() <= 2) {
+            out.println("No");
+            return;
+        }
+        for (int i = 1; i < s.length() - 1; i++) {
+            if (s.charAt(i) != '=') {
+                out.println("No");
+                return;
+            }
+        }
+
+        out.println("Yes");
+
     }
 
     public static void main(final String[] args) {

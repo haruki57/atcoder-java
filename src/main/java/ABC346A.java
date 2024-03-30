@@ -6,22 +6,24 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class ABC346A {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
-
-    static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-    }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
+        int N = scanner.nextInt();
+        int[] a = new int[N];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        for (int i = 0; i < N - 1; i++) {
+            out.print(a[i] * a[i+1]);
+            out.print(" ");
+        }
+
         out.flush();
     }
+
 
     static class FastScanner {
         private final InputStream in = System.in;
@@ -88,4 +90,5 @@ public class _Template {
         }
         public double nextDouble() { return Double.parseDouble(next());}
     }
+
 }
