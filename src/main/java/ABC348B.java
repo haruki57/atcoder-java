@@ -1,31 +1,39 @@
-package main.java;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class ABC348B {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] a = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            a[i][0] = scanner.nextInt();
+            a[i][1] = scanner.nextInt();
+        }
+
+        for (int i = 0; i < N; i++) {
+            int max = -1, idx = -1;
+            for (int j = 0; j < N; j++) {
+                if (i == j) continue;
+                if (max < (a[i][0] - a[j][0])*(a[i][0] - a[j][0]) + (a[i][1] - a[j][1])*(a[i][1] - a[j][1])) {
+                    max = (a[i][0] - a[j][0])*(a[i][0] - a[j][0]) + (a[i][1] - a[j][1])*(a[i][1] - a[j][1]);
+                    idx = j;
+                }
+            }
+            out.println(idx + 1);
+        }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

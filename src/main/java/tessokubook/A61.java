@@ -1,31 +1,37 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class _Template {
+public class A61 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int M = scanner.nextInt();
+        ArrayList<LinkedList<Integer>> graph = new ArrayList<LinkedList<Integer>>();
+        for (int i = 0; i < N; i++) {
+            graph.add(new LinkedList<>());
+        }
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt() - 1;
+            int b = scanner.nextInt() - 1;
+            graph.get(a).add(b+1);
+            graph.get(b).add(a+1);
+        }
+        for (int i = 0; i < N; i++) {
+            out.println((i+1) + ": " + graph.get(i).toString().replace("[", "{"). replace("]", "}"));
+        }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

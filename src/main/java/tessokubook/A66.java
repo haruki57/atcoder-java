@@ -1,31 +1,83 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class _Template {
+public class A66 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    static class UnionFind {
+        int[] par;
+        int[] size;
+
+        public UnionFind(int n) {
+            par = new int[n + 1];
+            size = new int[n + 1];
+            Arrays.fill(par, -1);
+            Arrays.fill(size, 1);
+        }
+
+        int root(int x){
+            while(true) {
+                if(par[x] == -1) {
+                    break;
+                }
+                x = par[x];
+            }
+            return x;
+        }
+
+        void unite(int u, int v) {
+            int rootU = root(u);
+            int rootV = root(v);
+            if(rootU == rootV) {
+                return;
+            }
+            if(size[rootU] < size[rootV]) {
+                par[rootU] = rootV;
+                size[rootV] += size[rootU];
+            }
+            else {
+                par[rootV] = rootU;
+                size[rootU] += size[rootV];
+            }
+        }
+
+        boolean same(int u, int v) {
+            return root(u) == root(v);
+        }
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int Q = scanner.nextInt();
+        var unionFind = new UnionFind(N);
+        for (int i = 0; i < Q; i++) {
+            int x = scanner.nextInt();
+            int u = scanner.nextInt();
+            int v = scanner.nextInt();
+            if (x == 1) {
+                // union
+                unionFind.unite(u, v);
+            } else {
+                if (unionFind.same(u, v)){
+                    out.println("Yes");
+                } else {
+                    out.println("No");
+                }
+            }
+        }
+
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

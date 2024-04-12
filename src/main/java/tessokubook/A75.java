@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,51 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A75 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] a = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            a[i][0] = scanner.nextInt();
+            a[i][1] = scanner.nextInt();
+        }
+        Arrays.sort(a, ((o1, o2) -> o1[1]-o2[1]));
+        int[][] dp = new int[N+1][1500];
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                dp[i][j] = -1;
+            }
+        }
+        dp[0][0] = 0;
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                if (j > a[i-1][1] || j < a[i-1][0]) {
+                    dp[i][j] = dp[i-1][j];
+                } else {
+                    dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-a[i-1][0]] + 1);
+                }
+            }
+        }
+        //System.out.println(dp[N][1440]);
+        int ans = 0;
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                ans = Math.max(ans, dp[i][j]);
+            }
+            //System.out.println(Arrays.toString(dp[i]));
+        }
+        //System.out.println(dp[N][]);
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

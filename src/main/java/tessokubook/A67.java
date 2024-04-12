@@ -1,31 +1,90 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A67 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    static class UnionFind {
+        int[] par;
+        int[] size;
+
+        public UnionFind(int n) {
+            par = new int[n + 1];
+            size = new int[n + 1];
+            Arrays.fill(par, -1);
+            Arrays.fill(size, 1);
+        }
+
+        int root(int x){
+            while(true) {
+                if(par[x] == -1) {
+                    break;
+                }
+                x = par[x];
+            }
+            return x;
+        }
+
+        void unite(int u, int v) {
+            int rootU = root(u);
+            int rootV = root(v);
+            if(rootU == rootV) {
+                return;
+            }
+            if(size[rootU] < size[rootV]) {
+                par[rootU] = rootV;
+                size[rootV] += size[rootU];
+            }
+            else {
+                par[rootV] = rootU;
+                size[rootU] += size[rootV];
+            }
+        }
+
+        boolean same(int u, int v) {
+            return root(u) == root(v);
+        }
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int M = scanner.nextInt();
+        var unionFind = new UnionFind(N);
+        int[][] edges = new int[M][3];
+        for (int i = 0; i < M; i++) {
+            edges[i][0] = scanner.nextInt();
+            edges[i][1] = scanner.nextInt();
+            edges[i][2] = scanner.nextInt();
+        }
+        Arrays.sort(edges, (o1, o2) -> o1[2] - o2[2]);
+        long ans = 0;
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int cost = edges[i][2];
+            // System.out.println(Arrays.toString(edges[i]));
+            if (unionFind.same(u, v)) {
+                continue;
+            } else {
+                unionFind.unite(u, v);
+                ans += cost;
+            }
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

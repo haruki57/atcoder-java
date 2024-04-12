@@ -1,19 +1,42 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class B08 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] sum = new int[2009][2009];
+        int[][] stars = new int[2009][2009];
+        for (int i = 0; i < N; i++) {
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            stars[x][y]++;
+        }
+        for (int i = 1; i < sum.length; i++) {
+            for (int j = 1; j < sum.length; j++) {
+                sum[i][j] = sum[i-1][j]+sum[i][j-1]-sum[i-1][j-1] + stars[i][j];
+            }
+        }
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+//                out.print(sum[i][j] + " ");
+            }
+//            out.println();
+        }
+        int Q = scanner.nextInt();
+        for (int i = 0; i < Q; i++) {
+            int a = scanner.nextInt();
+            int b = scanner.nextInt();
+            int c = scanner.nextInt();
+            int d = scanner.nextInt();
+            out.println(sum[c][d]-sum[c][b-1]-sum[a-1][d]+sum[a-1][b-1]);
+        }
     }
 
     public static void main(final String[] args) {

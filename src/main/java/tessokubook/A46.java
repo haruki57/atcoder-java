@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,46 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A46 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    static int dist(int[] a, int[] b) {
+        return (a[0]-b[0]) * (a[0]-b[0]) +(a[1]-b[1]) * (a[1]-b[1]);
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] a = new int[N][2];
+        for (int i = 0; i <N; i++) {
+            a[i][0] = scanner.nextInt();
+            a[i][1] = scanner.nextInt();
+        }
+        int curIdx = 0;
+        for (int i = 0; i < N; i++) {
+            int min = INF;
+            int minIdx = -1;
+            for (int j = 0; j < N; j++) {
+                if (j == curIdx) {continue;}
+                if (a[j][0] == -1){continue;}
+                int d = dist(a[curIdx], a[j]);
+                if (min > d) {
+                    min = d;
+                    minIdx = j;
+                }
+            }
+            a[curIdx][0] = -1;
+            out.println(curIdx + 1);
+            curIdx = minIdx;
+        }
+        out.println(1);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

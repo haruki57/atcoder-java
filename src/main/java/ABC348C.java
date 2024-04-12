@@ -1,31 +1,40 @@
-package main.java;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class ABC348C {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        var map = new HashMap<Integer, Integer>();
+        for (int i = 0; i < N; i++) {
+            int a =  scanner.nextInt();
+            int c =  scanner.nextInt();
+            if (map.get(c) == null) {
+                map.put(c, a);
+            }
+            if (map.get(c) > a) {
+                map.put(c, a);
+            }
+        }
+        // System.out.println(map);
+        long ans = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            ans = Math.max(entry.getValue(), ans);
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

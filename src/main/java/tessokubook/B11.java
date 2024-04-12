@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class B11 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
@@ -14,6 +14,22 @@ public class _Template {
         int N = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        Arrays.sort(a);
+        int Q = scanner.nextInt();
+        for (int i = 0; i < Q; i++) {
+            int x = scanner.nextInt();
+            int ok = -1, ng=a.length;
+            while(Math.abs(ok-ng) > 1) {
+                int mid = (ok+ng)/2;
+                if(a[mid]<x) {
+                    ok = mid;
+                } else {
+                    ng = mid;
+                }
+            }
+            System.out.println(ok+1);
+
+        }
     }
 
     public static void main(final String[] args) {

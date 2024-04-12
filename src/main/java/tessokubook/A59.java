@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,74 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A59 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    // 1-indexed!
+    static class SegmentTree {
+        public int[] dat = new int[300000];
+        public int size = 1;
+
+        void init(int N) {
+            size = 1;
+            while(size < N) {
+                size *= 2;
+            }
+            Arrays.fill(dat, 0);
+        }
+
+        void update(int pos, int x) {
+            pos = pos + size - 1;
+            dat[pos] = x;
+            while(pos >= 2) {
+                pos /= 2;
+                dat[pos] = dat[pos * 2] + dat[pos * 2 + 1];
+            }
+        }
+
+        int query (int l, int r, int a, int b, int u) {
+            if (r <= a || b <= l) {
+                return 0;
+            }
+            if (l <= a && b <= r) {
+                return dat[u];
+            }
+            int m = (a + b) / 2;
+            int answerL = query(l, r, a, m, u*2);
+            int answerR = query(l, r, m, b, u*2 + 1);
+            return answerL + answerR;
+        }
+
+        int query(int l, int r) {
+            return query(l, r, 1, size + 1, 1);
+        }
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int Q = scanner.nextInt();
+        var segTree = new SegmentTree();
+        segTree.init(N);
+        for (int i = 0; i < Q; i++) {
+            int type = scanner.nextInt();
+            if (type == 1) {
+                int pos = scanner.nextInt();
+                int x = scanner.nextInt();
+                segTree.update(pos, x);
+            } else {
+                int l = scanner.nextInt();
+                int r = scanner.nextInt();
+                out.println(segTree.query(l, r));
+            }
+        }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

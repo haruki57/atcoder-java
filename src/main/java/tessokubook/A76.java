@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,14 +6,79 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A76 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int W = scanner.nextInt();
+        int min = scanner.nextInt();
+        int max = scanner.nextInt();
+        int[] x = new int[N+2];
+        for (int i = 1; i < N + 1; i++) {
+            x[i] = scanner.nextInt();
+        }
+        x[0] = 0;
+        x[N+1] = W;
+        Arrays.sort(x);
+        int[] dp = new int[N+2];
+        int[] dpSum = new int[N+2];
+        dp[0] = 1;
+        dpSum[0] = 1;
+        for (int i = 1; i < dp.length; i++) {
+            /*
+            int l=INF, r=-1;
+
+            for (int j = 0; j < i; j++) {
+                int diff = x[i]-x[j];
+                if (min <= diff && diff <= max) {
+                    l = Math.min(l, j);
+                    r = Math.max(r, j);
+
+                }
+             }
+             */
+
+            int l = lowerBound(x, x[i]-max);
+            int r = lowerBound(x, x[i]-min + 1) - 1;
+
+            // out.println(i + " " + l + " " + r);
+            if (0 <= r && r < dpSum.length) {
+                dp[i] = dpSum[r];
+            } else {
+                dp[i] = 0;
+            }
+
+            if (0 <= l-1 && l-1 < dpSum.length) {
+                dp[i] = dp[i] - dpSum[l - 1];
+            }
+            dp[i] = (dp[i] + MOD)%MOD;
+            /*
+            if (l == INF) {
+                dp[i] = 0;
+            } else {
+                dp[i] = (dpSum[r]-(l-1<0?0:dpSum[l-1]))%MOD;
+            }*/
+            dpSum[i] = (dpSum[i-1]+dp[i])%MOD;
+        }
+        //out.println(Arrays.toString(dp));
+        //out.println(Arrays.toString(dpSum));
+        out.println(dp[dp.length-1]);
+    }
+
+    static int lowerBound(int[] A, int x) {
+        int l = -1, r = A.length;
+        while(Math.abs(r - l) > 1) {
+            int mid = (l + r) / 2;
+            if(A[mid] >= x) {
+                r = mid;
+            }
+            else {
+                l = mid;
+            }
+        }
+        return r;
     }
 
     public static void main(final String[] args) {

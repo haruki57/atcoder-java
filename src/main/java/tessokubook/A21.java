@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,40 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A21 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] a = new int[N + 2][2];
+        for (int i = 1; i <= N; i++) {
+            a[i][0] = scanner.nextInt();
+            a[i][1] = scanner.nextInt();
+        }
+        int[][] dp = new int[N+2][N+2];
+        for (int len = N - 2; len >= 0; len--) {
+            for (int left = 1; left <= N - len; left++) {
+                int right = left + len;
+                // System.out.println(left + " "+ right + " " + len);
+                int leftP = left <= a[left-1][0] && a[left-1][0] <= right ? a[left-1][1] : 0;
+                int rightP = left <= a[right + 1][0] && a[right+ 1][0] <= right ? a[right+1][1] : 0;
+                dp[left][right] = Math.max(dp[left-1][right] + leftP, dp[left][right+1] + rightP);
+            }
+        }
+        int ans = 0;
+        for (int i = 0; i < dp.length; i++) {
+            ans =Math.max(ans, dp[i][i]);
+            // System.out.println(Arrays.toString(dp[i]));
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

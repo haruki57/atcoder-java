@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 
 public class A17 {
     static int MOD = 1000000007;
@@ -20,15 +22,24 @@ public class A17 {
         ans[0] = 0;
         ans[1] = a[0];
         for (int i = 2; i < N; i++) {
-            int i1 = ans[i - 1] + a[i - 1];
-            int i2 = ans[i - 2] + b[i - 2];
-            if (i1 < i2) {
-                ans[i] = i1;
+            ans[i] = Math.min(ans[i - 1] + a[i - 1], ans[i - 2] + b[i - 2]);
+        }
+        Stack<Integer> stack = new Stack<>();
+        for (int i = N-1; i >= 1; i--) {
+            stack.push(i + 1);
+            if (ans[i] == ans[i-1] + a[i-1]) {
+                // do nothing
             } else {
-                ans[i] = i2;
+                i--;
             }
         }
-        System.out.println(ans[N-1]);
+        stack.push(1);
+        out.println(stack.size());
+        for(;!stack.isEmpty();) {
+            out.print(stack.pop());
+            out.print(" ");
+        }
+        out.println();
     }
 
     public static void main(final String[] args) {

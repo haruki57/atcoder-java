@@ -1,31 +1,50 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A29 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        final long N = scanner.nextInt();
+        final long R = scanner.nextInt();
+        long a = 1;
+        long b = 1;
+        for (int i = 2; i <= N; i++) {
+            a = (a*i) % MOD;
+        }
+        for (int i = 2; i <= R; i++) {
+            b = (b*i) % MOD;
+        }
+        for (int i = 2; i <= N-R; i++) {
+            b = (b*i) % MOD;
+        }
+        a = (a * powWithMod(b, MOD-2, MOD)) % MOD;
+        System.out.println(a);
+    }
+
+    private static long powWithMod(long a, long b, int mod) {
+        String binaryString = Long.toBinaryString(b);
+        int len = binaryString.length();
+        long ret = 1;
+        for (int i = 0; i < len; i++) {
+            if (binaryString.charAt(len-i-1) == '1') {
+                ret = (ret * a) % MOD;
+            }
+            a = (a*a) % MOD;
+        }
+        return ret;
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

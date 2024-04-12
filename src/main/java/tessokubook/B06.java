@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class B06 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
@@ -14,6 +14,37 @@ public class _Template {
         int N = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        int[] sum = new int[N+1];
+        sum[0] = 0;
+        for (int i = 1; i < sum.length; i++) {
+            sum[i] = sum[i-1]+a[i-1];
+        }
+        // System.out.println(Arrays.toString(sum));
+        int Q = scanner.nextInt();
+        for (int i = 0; i < Q; i++) {
+            int l = scanner.nextInt() - 1;
+            int r = scanner.nextInt() - 1;
+            int days = r-l + 1;
+
+            int winNum = sum[r+1]-sum[l];
+            // System.out.println(days +" " +winNum);
+            if (days % 2 == 0) {
+                if (days / 2 < winNum) {
+                    out.println("win");
+                } else if (days /2 > winNum) {
+                    out.println("lose");
+                } else {
+                    out.println("draw");
+                }
+            } else {
+                if (days / 2 < winNum) {
+                    out.println("win");
+                } else {
+                    out.println("lose");
+                }
+            }
+        }
+
     }
 
     public static void main(final String[] args) {

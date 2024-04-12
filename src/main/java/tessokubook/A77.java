@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,14 +6,48 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A77 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    static boolean isOk(int L, int[] a, int K, int len) {
+        int cnt = 0;
+        int currentCut = 0;
+        //System.out.println(len);
+        for (int i = 0; i < a.length; i++) {
+            if (a[i]-currentCut >= len && cnt < K) {
+                cnt++;
+                currentCut = a[i];
+                //System.out.println("choose " + a[i]);
+            }
+        }
+        //System.out.println(cnt);
+        //System.out.println();
+        if (L - currentCut < len) {
+            return false;
+        }
+
+
+        return cnt == K;
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
+        int L = scanner.nextInt();
+        int K = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        Arrays.sort(a);
+        int ok = 1, ng = L+1;
+        while(Math.abs(ok-ng) > 1) {
+            int mid = (ok+ng) / 2;
+            if (isOk(L, a, K ,mid)) {
+                ok = mid;
+            } else {
+                ng = mid;
+            }
+        }
+        System.out.println(ok);
     }
 
     public static void main(final String[] args) {

@@ -1,12 +1,14 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
-public class _Template {
+public class B03 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
@@ -14,6 +16,17 @@ public class _Template {
         int N = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < i; j++) {
+                for (int k = 0; k < j; k++) {
+                    if (a[i]+a[j]+a[k]==1000) {
+                        out.println("Yes");
+                        return;
+                    }
+                }
+            }
+        }
+        out.println("No");
     }
 
     public static void main(final String[] args) {

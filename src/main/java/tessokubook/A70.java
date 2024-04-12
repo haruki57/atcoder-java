@@ -1,31 +1,56 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class _Template {
+public class A70 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int M = scanner.nextInt();
+        int start = 0;
+        int[] shortest = new int[1<<N + 9];
+        Arrays.fill(shortest, INF);
+        for (int i = 0; i < N; i++) {
+            int a = scanner.nextInt();
+            if (a == 1) {
+                start = start | 1 << i;
+            }
+        }
+        int[][] xyz = new int[M][3];
+        for (int i = 0; i < xyz.length; i++) {
+            xyz[i][0] = scanner.nextInt()-1;
+            xyz[i][1] = scanner.nextInt()-1;
+            xyz[i][2] = scanner.nextInt()-1;
+        }
+        shortest[start] = 0;
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{start, 0});
+        while(!queue.isEmpty()){
+            int[] polled = queue.poll();
+            int curr = polled[0];
+            int dist = polled[1];
+            for (int i = 0; i < M; i++) {
+                int next = curr ^ (1<<xyz[i][0]) ^ (1<<xyz[i][1]) ^ (1<<xyz[i][2]);
+                if (shortest[next] != INF) {
+                    continue;
+                }
+                shortest[next] = dist + 1;
+                queue.add(new int[]{next, dist+1});
+            }
+        }
+        System.out.println(shortest[(1<<N)-1] == INF ? -1 : shortest[(1<<N)-1]);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

@@ -12,17 +12,18 @@ public class Methods {
     return ~ret;
   }
 
-  // Not Verified
-  int binarySearch(int[] a, int n) {
-    int ok = a.length + 1, ng = -1;
-    while (ok - ng > 1) {
-      int mid = (ok + ng) / 2;
-      if(a[mid] >= n) {
-        ok = mid;
-      } else {
-        ng = mid;
+  // Verified https://atcoder.jp/contests/tessoku-book/submissions/52257983
+  int lowerBound(int[] A, int x) {
+    int l = -1, r = A.length;
+    while(Math.abs(r - l) > 1) {
+      int mid = (l + r) / 2;
+      if(A[mid] >= x) {
+        r = mid;
+      }
+      else {
+        l = mid;
       }
     }
-    return ok;
+    return r;
   }
 }

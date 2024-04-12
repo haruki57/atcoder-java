@@ -1,31 +1,57 @@
-package main.java;
+package tessokubook;
+
+import com.sun.jdi.connect.spi.TransportService;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class _Template {
+public class A65 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        List<Integer>[] graph = new LinkedList[N];
+        int[] ans = new int[N];
+        for (int i = 0; i < N; i++) {
+            graph[i] = new LinkedList<>();
+        }
+        for (int i = 1; i < N; i++) {
+            int parent = scanner.nextInt() - 1;
+            graph[parent].add(i);
+        }
+        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack2 = new Stack<>();
+        stack.push(0);
+        stack2.push(0);
+        while(!stack.isEmpty()) {
+            int idx = stack.pop();
+            for (Integer child : graph[idx]) {
+                stack.push(child);
+                stack2.push(child);
+            }
+        }
+        while(!stack2.isEmpty()) {
+            int idx = stack2.pop();
+            int sum = 0;
+            for (Integer child : graph[idx]) {
+                sum+=ans[child];
+                sum++;
+            }
+            ans[idx] = sum;
+        }
+        for (int i = 0; i < N; i++) {
+            out.print(ans[i] + " ");
+        }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

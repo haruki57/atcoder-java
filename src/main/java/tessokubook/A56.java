@@ -1,31 +1,58 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.TreeSet;
 
-public class _Template {
+public class A56 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int Q = scanner.nextInt();
+        char[] S = scanner.next().toCharArray();
+        long[] bb = new long[N+1];
+        long[] hashes = new long[N+1];
+        bb[0] = 1;
+
+        for (int i = 1; i < bb.length; i++) {
+            bb[i] = bb[i-1] * 100 % MOD;
+        }
+        hashes[0] = 0;
+        for (int i = 1; i < hashes.length; i++) {
+            hashes[i] = (hashes[i-1] * 100 + S[i -1]) % MOD;
+        }
+        // System.out.println(Arrays.toString(hashes));
+        for (int i = 0; i < Q; i++) {
+            int a = scanner.nextInt();
+            int b = scanner.nextInt();
+            int c = scanner.nextInt();
+            int d = scanner.nextInt();
+            if (myHash(a, b, hashes, bb) == myHash(c, d, hashes, bb)) {
+                out.println("Yes");
+            } else {
+                out.println("No");
+            }
+        }
+    }
+
+    private static long myHash(int a, int b, long[] hashes, long[] bb) {
+        long ret = hashes[b] - (hashes[a-1] * bb[b-a+1]) % MOD;
+        if (ret < 0) {
+            ret += MOD;
+        }
+        return ret % MOD;
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

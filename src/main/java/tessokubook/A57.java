@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,53 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A57 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
+        int Q = scanner.nextInt();
         int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        Arrays.setAll(a, i -> scanner.nextInt()-1);
+        int[][] dp = new int[39][N];
+        for (int i = 0; i < N; i++) {
+            dp[0][i] = a[i];
+        }
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < N; j++) {
+                dp[i][j] = dp[i-1][dp[i-1][j]];
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            // System.out.println(Arrays.toString(dp[i]));
+        }
+        for (int i = 0; i < Q; i++) {
+            int x = scanner.nextInt() - 1;
+            int y = scanner.nextInt();
+            int ans = x;
+            for (int j = 30; j >= 0; j--) {
+                if ((y & (1<<j)) > 0) {
+                    ans = dp[j][ans];
+                }
+            }
+            out.println(ans + 1);
+        }
+    }
+
+    private static long myHash(int a, int b, long[] hashes, long[] bb) {
+        long ret = hashes[b] - (hashes[a-1] * bb[b-a+1]) % MOD;
+        if (ret < 0) {
+            ret += MOD;
+        }
+        return ret % MOD;
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

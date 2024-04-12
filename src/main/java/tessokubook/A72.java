@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,62 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A72 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int H = scanner.nextInt();
+        int W = scanner.nextInt();
+        int K = scanner.nextInt();
+        char[][] tile = new char[H][W];
+        for (int i = 0; i < H; i++) {
+            tile[i] = scanner.next().toCharArray();
+        }
+        int ans = 0;
+        for (int bit = 0; bit < 1<<H; bit++) {
+            if (Integer.bitCount(bit) > K) {
+                continue;
+            }
+            char[][] copy = new char[H][W];
+            for (int i = 0; i < H; i++) {
+                for (int j = 0; j < W; j++) {
+                    copy[i][j] = tile[i][j];
+                }
+            }
+            int len = Integer.toBinaryString(bit).length();
+            for (int i = 0; i < len; i++) {
+                if ((bit & (1<<i)) > 0) {
+                    for (int j = 0; j < W; j++) {
+                        copy[i][j] = '#';
+                    }
+                }
+            }
+            int blackNum = 0;
+            int sumW[] = new int[W];
+            for (int i = 0; i < H; i++) {
+                for (int j = 0; j < W; j++) {
+                    if (copy[i][j] == '.') {
+                        sumW[j]++;
+                    } else {
+                        blackNum++;
+                    }
+                }
+            }
+            Arrays.sort(sumW);
+            for (int i = 0; i <K-Integer.bitCount(bit); i++) {
+                blackNum += sumW[W-1-i];
+            }
+            ans = Math.max(ans ,blackNum);
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

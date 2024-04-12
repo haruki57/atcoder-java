@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,49 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A34 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
+        final int N = scanner.nextInt();
+        final int X = scanner.nextInt();
+        final int Y= scanner.nextInt();
+        final int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        int[] grundy = new int[100000 + 1];
+        for (int i = 0; i < grundy.length; i++) {
+            boolean[] b = new boolean[3];
+            int x = -1, y=-1;
+            if (i-X >= 0) {
+                b[grundy[i-X]] = true;
+            }
+            if (i-Y >= 0) {
+                b[grundy[i-Y]] = true;
+            }
+            int gNum = 0;
+            if (!b[0]) {
+                gNum = 0;
+            } else if (!b[1]){
+                gNum = 1;
+            } else {
+                gNum = 2;
+            }
+            grundy[i] = gNum;
+        }
+        // System.out.println(Arrays.toString(grundy));
+        int xor = 0;
+        for (int i = 0; i < N; i++) {
+            xor = xor ^ grundy[a[i]];
+        }
+        System.out.println(xor != 0 ? "First" : "Second");
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

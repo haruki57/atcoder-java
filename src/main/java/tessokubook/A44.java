@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,40 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A44 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
+        int Q = scanner.nextInt();
+        boolean isReverse = false;
         int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        for (int i = 0; i < N; i++) {
+            a[i] = i + 1;
+        }
+        for (int i = 0; i < Q; i++) {
+            int q = scanner.nextInt();
+            if (q==1) {
+                int x = scanner.nextInt() - 1;
+                int y = scanner.nextInt();
+                int idx = isReverse ?  N - x - 1 : x;
+                a[idx] = y;
+            } else if (q==2) {
+                isReverse = !isReverse;
+            } else {
+                int x = scanner.nextInt() - 1;
+                int idx = isReverse ?  N - x - 1 : x;
+                out.println(a[idx]);
+            }
+        }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

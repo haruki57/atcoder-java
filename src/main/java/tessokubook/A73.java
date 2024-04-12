@@ -1,31 +1,63 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class _Template {
+public class A73 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int M = scanner.nextInt();
+        int BUFF = 10000;
+        List<int[]>[] graph = new LinkedList[N];
+        for (int i = 0; i < N; i++) {
+            graph[i] = new LinkedList<>();
+        }
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt() - 1;
+            int b = scanner.nextInt() - 1;
+            int c = scanner.nextInt() * BUFF;
+            int d = scanner.nextInt();
+            graph[a].add(new int[]{b, c-d});
+            graph[b].add(new int[]{a, c-d});
+        }
+        PriorityQueue<int[]> queue = new PriorityQueue<>((o1, o2) -> o1[1]-o2[1]);
+        int[] shortest = new int[N];
+        Arrays.fill(shortest, INF);
+        queue.add(new int[]{0, 0});
+        shortest[0] = 0;
+        while(!queue.isEmpty()) {
+            int[] polled = queue.poll();
+            int idx = polled[0];
+            int dist = polled[1];
+            if (dist > shortest[idx]) {
+                continue;
+            }
+            for (int[] ints : graph[idx]) {
+                int next = ints[0];
+                int nextDist = dist + ints[1];
+                if (shortest[next]> nextDist) {
+                    shortest[next] = nextDist;
+                    queue.add(new int[]{next, nextDist});
+                }
+            }
+        }
+        // System.out.println(Arrays.toString(shortest));
+        int ansDist = (shortest[N-1]+ 9999)/ BUFF;
+        int ansTree = (ansDist * BUFF) - shortest[N-1];
+
+        System.out.println(ansDist + " " + ansTree);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

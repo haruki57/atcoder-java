@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A24 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
@@ -14,18 +14,31 @@ public class _Template {
         int N = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        int[] dp = new int[N];
+        Arrays.fill(dp, INF);
+        for (int i = 0; i < N; i++) {
+            int max = -1;
+            for (int j = 0; j < i; j++) {
+                if (a[j] < a[i]) {
+                    max = Math.max(max, dp[j]);
+                }
+            }
+            System.out.println(max);
+            if (max == -1) {
+                dp[i] = 1;
+            } else {
+                dp[i] = max + 1;
+            }
+        }
+        System.out.println(Arrays.toString(dp));
+        System.out.println(dp[N-1]);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

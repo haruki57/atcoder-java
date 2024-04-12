@@ -1,31 +1,88 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
-public class _Template {
+public class A46_2 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    static int dist(int[] a, int[] b) {
+        return (a[0]-b[0]) * (a[0]-b[0]) +(a[1]-b[1]) * (a[1]-b[1]);
+    }
+
+    static long distSum(int[][] a, int[] order) {
+        long ret = 0;
+        for (int i = 0; i < order.length - 1; i++) {
+            ret += dist(a[order[i]], a[order[i+1]]);
+        }
+        return ret;
+    }
+
+    static void rev(int[] order, int l, int r) {
+        for (int i = l; i < l + (r-l)/2; i++) {
+            int j = r - i + 1;
+            // System.out.println(i + " " + j);
+            int tmp = order[i];
+            order[i] = order[j];
+            order[j] = tmp;
+        }
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
+        // int[] b = {1,2,3,4,5};
+        // rev(b, 0, 3);
+        // System.out.println(Arrays.toString(b));
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] a = new int[N][2];
+        for (int i = 0; i <N; i++) {
+            a[i][0] = scanner.nextInt();
+            a[i][1] = scanner.nextInt();
+        }
+        int curIdx = 0;
+        int[] order = new int[N+1];
+        for (int i = 0; i < N; i++) {
+            order[i] = i;
+        }
+        order[N] = 0;
+        Random rand = new Random();
+        long maxDist = distSum(a, order);
+        for (int i = 0; i < 200000; i++) {
+            int randL = rand.nextInt(order.length - 1) + 1;
+            int randR = rand.nextInt(order.length - 1) + 1;
+            if (randL == randR) {
+                continue;
+            }
+            if (randL > randR) {
+                int tmp = randL;
+                randL = randR;
+                randR = tmp;
+            }
+            rev(order, randL, randR);
+            // System.out.println(randL + " " + randR);
+            // System.out.println(Arrays.toString(order));
+            // System.out.println();
+            long curDist = distSum(a, order);
+            if (maxDist < curDist) {
+                maxDist = curDist;
+            } else {
+                rev(order, randL, randR);
+            }
+        }
+        for (int i = 0; i < order.length; i++) {
+            out.println(order[i] + 1);
+        }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

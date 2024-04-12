@@ -1,31 +1,104 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A69 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+    static class Edge {
+        int to, cap, rev;
+        public Edge(int to, int cap, int rev) {
+            this.to = to;
+            this.cap = cap;
+            this.rev = rev;
+        }
+    }
+    static class MaximumFlow {
+        int size;
+        boolean[] used;
+        ArrayList<Edge>[] G;
+        MaximumFlow(int N) {
+            size = N + 9;
+            used = new boolean[N+9];
+            G = new ArrayList[N+9];
+            for (int i = 0; i < size; i++) {
+                G[i] = new ArrayList<>();
+            }
+        }
+
+        void addEdge(int a,int b,int c) {
+            int currentGa = G[a].size();
+            int currentGb = G[b].size();
+            G[a].add(new Edge(b, c, currentGb));
+            G[b].add(new Edge(a, 0, currentGa));
+        }
+
+        int dfs(int pos, int goal, int F) {
+            if (pos == goal) return F;
+            used[pos] = true;
+
+            for (int i = 0; i < G[pos].size(); i++) {
+                if (G[pos].get(i).cap == 0) {
+                    continue;
+                }
+                if (used[G[pos].get(i).to]) {
+                    continue;
+                }
+                int flow = dfs(G[pos].get(i).to, goal, Math.min(F, G[pos].get(i).cap));
+                if (flow >= 1) {
+                    G[pos].get(i).cap -= flow;
+                    G[G[pos].get(i).to].get(G[pos].get(i).rev).cap += flow;
+                    return flow;
+                }
+            }
+            return 0;
+        }
+        int maxFlow(int s, int t) {
+            int totalFlow = 0;
+            while(true) {
+                for (int i = 0; i < size; i++) {
+                    used[i] = false;
+                }
+                int F = dfs(s, t, INF);
+                if (F == 0) {
+                    break;
+                }
+                totalFlow += F;
+            }
+
+            return totalFlow;
+        }
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        var mf = new MaximumFlow(N*3);
+        for (int i = 1; i <= N; i++) {
+            String s = scanner.next();
+            for (int j = 1; j <= s.length(); j++) {
+                if (s.charAt(j-1) == '#') {
+                    mf.addEdge(i, N+j, 1);
+                }
+            }
+        }
+        for (int i = 1; i <= N; i++) {
+            mf.addEdge(0, i, 1);
+            mf.addEdge(N +i, N*2+2, 1);
+        }
+        System.out.println(mf.maxFlow(0, N*2+2));
+
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {

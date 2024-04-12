@@ -1,4 +1,4 @@
-package main.java;
+package tessokubook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,26 +6,46 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class A18 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
+        int S = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
+        boolean[][] dp = new boolean[N+1][S+1];
+        for (int i = 1; i < dp.length; i++) {
+            if (a[i-1] < dp[i].length) {
+                dp[i][a[i-1]] = true;
+            }
+            for (int j = 0; j < dp[i].length; j++) {
+                if (dp[i-1][j]) {
+                    dp[i][j] = true;
+                }
+                if (j-a[i-1] >= 0 && dp[i-1][j-a[i-1]]) {
+                    dp[i][j] = true;
+                }
+            }
+        }
+        for (int i = 0; i < dp.length; i++) {
+            // System.out.println(Arrays.toString(dp[i]));
+        }
+
+        if (dp[N][S]) {
+            out.println("Yes");
+        } else {
+            out.println("No");
+        }
+
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        try {
-            run(scanner, out);
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            out.flush();
-        }
+        run(scanner, out);
+        out.flush();
     }
 
     static class FastScanner {
