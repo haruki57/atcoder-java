@@ -12,7 +12,7 @@ public class B13 {
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int K = scanner.nextInt();
+        long K = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
 
@@ -21,13 +21,11 @@ public class B13 {
         int l = 0;
         for (int r = 0; r < a.length; r++) {
             sum+=a[r];
-            while(l < r && sum <= K) {
+            while(l <= r && sum > K) {
                 sum -= a[l];
                 l++;
             }
-            if (sum <= K) {
-
-            }
+            ans += r-l + 1;
         }
         System.out.println(ans);
     }
