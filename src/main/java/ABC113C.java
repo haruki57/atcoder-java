@@ -1,59 +1,46 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A24 {
+public class ABC113C {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
+        int M = scanner.nextInt();
+        int[][] city = new int[M][2];
+        List<Integer>[] yearsByCity = new List[N+1];
+        for (int i = 0; i < yearsByCity.length; i++) {
+            yearsByCity[i] = new ArrayList<>();
         }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
+        for (int i = 0; i < M; i++) {
+            city[i][0] = scanner.nextInt();
+            city[i][1] = scanner.nextInt();
+            yearsByCity[city[i][0]].add(city[i][1]);
+        }
+        Map<Long, String> ansMap = new HashMap<>();
+
+        for (int i = 1; i < yearsByCity.length; i++) {
+            List<Integer> years = yearsByCity[i];
+            Collections.sort(years);
+            int cnt = 1;
+            for (Integer year : years) {
+                ansMap.put(i * 1000000000L + year, pad0(i) + pad0(cnt));
+                cnt++;
             }
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        for (int i = 0; i < M; i++) {
+            long key = city[i][0] * 1000000000L + city[i][1];
+            System.out.println(ansMap.get(key));
+        }
+    }
+
+    static String pad0(int i) {
+        String s = "0000000" + i;
+        int len = s.length();
+        return s.substring(len - 6, len);
     }
 
     public static void main(final String[] args) {

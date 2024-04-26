@@ -1,59 +1,46 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class ABC012D {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
+        int M = scanner.nextInt();
+        int[][] d = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            Arrays.fill(d[i],INF);
+        }
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            int t = scanner.nextInt();
+            d[a][b]=d[b][a]=t;
+        }
+        for (int k = 0; k < N; k++) {
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    d[i][j] = Math.min(d[i][j], d[i][k] + d[k][j]);
                 }
             }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
         }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
-            }
+        for (int i = 0; i < N; i++) {
+            // System.out.println(Arrays.toString(d[i]));
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        int minMax = INF;
+        for (int i = 0; i < N; i++) {
+            int max = 0;
+            for (int j = 0; j < N; j++) {
+                if (i==j)continue;
+                max = Math.max(max, d[i][j]);
+            }
+            minMax = Math.min(minMax, max);
+        }
+        System.out.println(minMax);
     }
 
     public static void main(final String[] args) {

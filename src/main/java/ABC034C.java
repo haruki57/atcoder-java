@@ -1,59 +1,43 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class ABC034C {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
+        int H = scanner.nextInt()-1;
+        int W = scanner.nextInt()-1;
+        long a = 1, b=1;
+
+        for (int i = 1; i <= H+W; i++) {
+            a = (a*i) % MOD;
         }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
-            }
+        for (int i = 1; i <= H; i++) {
+            b = (b*i) % MOD;
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        for (int i = 1; i <= W; i++) {
+            b = (b*i) % MOD;
+        }
+        System.out.println(divideWithMod(a, b, MOD));
+    }
+    private static long divideWithMod(long a, long b, int mod) {
+        return (a*powWithMod(b, mod-2, mod)%mod);
+    }
+
+    private static long powWithMod(long a, long b, int mod) {
+        String binaryString = Long.toBinaryString(b);
+        int len = binaryString.length();
+        long ret = 1;
+        for (int i = 0; i < len; i++) {
+            if (binaryString.charAt(len-i-1) == '1') {
+                ret = (ret * a) % mod;
+            }
+            a = (a*a) % mod;
+        }
+        return ret;
     }
 
     public static void main(final String[] args) {

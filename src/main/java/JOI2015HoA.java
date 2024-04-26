@@ -1,59 +1,52 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class JOI2015HoA {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
+        int M = scanner.nextInt();
+        int[] p = new int[M];
+        Arrays.setAll(p, i -> scanner.nextInt());
+        int[][] costs = new int[N-1][3];
+        for (int i = 0; i < N - 1; i++) {
+            costs[i][0]= scanner.nextInt();
+            costs[i][1]= scanner.nextInt();
+            costs[i][2]= scanner.nextInt();
         }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
+        int[] imos = new int[N+9];
+        for (int i = 1; i < p.length; i++) {
+            int s = p[i-1]-1;
+            int t = p[i]-1;
+            if (s>t) {
+                int tmp = s;
+                s = t;
+                t = tmp;
             }
+            imos[s]++;
+            imos[t]--;
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        int[] cnts = new int[N+9];
+        int current = 0;
+        for (int i = 0; i < cnts.length; i++) {
+            current += imos[i];
+            cnts[i] = current;
+        }
+
+        //System.out.println(Arrays.toString(cnts));
+        long ans = 0;
+        for (int i = 0; i < costs.length; i++) {
+            if (cnts[i]==0) continue;
+            long a = (long)cnts[i]*costs[i][0];
+            long b = (long)cnts[i]*costs[i][1]+costs[i][2];
+            ans += Math.min(a,b);
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {

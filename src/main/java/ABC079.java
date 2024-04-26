@@ -1,59 +1,37 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class ABC079 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
-        }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
+        int H = scanner.nextInt();
+        int W = scanner.nextInt();
+        int[][] d = new int[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                d[i][j]= scanner.nextInt();
             }
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        for (int k = 0; k < 10; k++) {
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    d[i][j]=Math.min(d[i][j], d[i][k]+d[k][j]);
+                }
+            }
+
+        }
+        long ans = 0;
+        for (int i = 0; i < H*W; i++) {
+            int a = scanner.nextInt();
+            if (a==-1)continue;
+            ans += d[a][1];
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {

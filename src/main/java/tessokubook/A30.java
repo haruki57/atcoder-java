@@ -27,15 +27,19 @@ public class A30 {
         System.out.println(a);
     }
 
+    private static long divideWithMod(long a, long b, int mod) {
+        return (a*powWithMod(b, mod-2, mod)%mod);
+    }
+
     private static long powWithMod(long a, long b, int mod) {
         String binaryString = Long.toBinaryString(b);
         int len = binaryString.length();
         long ret = 1;
         for (int i = 0; i < len; i++) {
             if (binaryString.charAt(len-i-1) == '1') {
-                ret = (ret * a) % MOD;
+                ret = (ret * a) % mod;
             }
-            a = (a*a) % MOD;
+            a = (a*a) % mod;
         }
         return ret;
     }

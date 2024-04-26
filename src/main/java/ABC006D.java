@@ -1,12 +1,10 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class ABC006D {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
@@ -53,7 +51,7 @@ public class A24 {
             }
         }
         //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        System.out.println(N - ans - 1);
     }
 
     public static void main(final String[] args) {

@@ -1,59 +1,71 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class ABC145D {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
+        int X = scanner.nextInt();
+        int Y = scanner.nextInt();
+        int xCnt = -1, yCnt = 1;
+        for (int i = 0; i <= X; i++) {
+            int x = i;
+            int y = i * 2;
+            int ok = -1, ng = INF;
             while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
+                int mid = (ok+ng)/2;
+                int xx = x + mid * 2;
+                int yy = y + mid * 1;
+                if (xx <= X && yy <= Y) {
                     ok = mid;
                 } else {
                     ng = mid;
                 }
             }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
-        }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
+            x += ok * 2;
+            y += ok;
+            if (x == X && y == Y) {
+                xCnt = i;
+                yCnt = ok;
+                break;
             }
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        if (xCnt == -1) {
+            System.out.println(0);
+            return;
+        }
+        long a = 1, b=1;
+        for (int i = 1; i <= xCnt + yCnt; i++) {
+            a = (a*i) % MOD;
+        }
+        for (int i = 1; i <= xCnt; i++) {
+            b = (b*i) % MOD;
+        }
+        for (int i = 1; i <= yCnt; i++) {
+            b = (b*i) % MOD;
+        }
+        System.out.println(divideWithMod(a, b, MOD));
+    }
+
+    private static long divideWithMod(long a, long b, int mod) {
+        return (a*powWithMod(b, mod-2, mod)%mod);
+    }
+
+    private static long powWithMod(long a, long b, int mod) {
+        String binaryString = Long.toBinaryString(b);
+        int len = binaryString.length();
+        long ret = 1;
+        for (int i = 0; i < len; i++) {
+            if (binaryString.charAt(len-i-1) == '1') {
+                ret = (ret * a) % mod;
+            }
+            a = (a*a) % mod;
+        }
+        return ret;
     }
 
     public static void main(final String[] args) {

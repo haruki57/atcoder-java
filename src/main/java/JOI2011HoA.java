@@ -1,59 +1,49 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A24 {
+public class JOI2011HoA {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
+        int M = scanner.nextInt();
         int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
+        int k = scanner.nextInt();
+        char[][] map = new char[M][];
+        for (int i = 0; i < M; i++) {
+            map[i] = scanner.next().toCharArray();
         }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
+
+        int[][] sumJ = new int[M+1][N+1];
+        for (int i = 1; i <= M; i++) {
+            for (int j = 1; j <= N; j++) {
+                sumJ[i][j] = sumJ[i-1][j]+sumJ[i][j-1]-sumJ[i-1][j-1] + (map[i-1][j-1]=='J'?1:0);
             }
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        int[][] sumO = new int[M+1][N+1];
+        for (int i = 1; i <= M; i++) {
+            for (int j = 1; j <= N; j++) {
+                sumO[i][j] = sumO[i-1][j]+sumO[i][j-1]-sumO[i-1][j-1] + (map[i-1][j-1]=='O'?1:0);
+            }
+        }
+        int[][] sumI = new int[M+1][N+1];
+        for (int i = 1; i <= M; i++) {
+            for (int j = 1; j <= N; j++) {
+                sumI[i][j] = sumI[i-1][j]+sumI[i][j-1]-sumI[i-1][j-1] + (map[i-1][j-1]=='I'?1:0);
+            }
+        }
+
+        for (int i = 0; i < k; i++) {
+            int y1 = scanner.nextInt()-1;
+            int x1 = scanner.nextInt()-1;
+            int y2 = scanner.nextInt();
+            int x2 = scanner.nextInt();
+            out.print(sumJ[y2][x2]-sumJ[y2][x1]-sumJ[y1][x2]+sumJ[y1][x1]+" ");
+            out.print(sumO[y2][x2]-sumO[y2][x1]-sumO[y1][x2]+sumO[y1][x1]+" ");
+            out.println(sumI[y2][x2]-sumI[y2][x1]-sumI[y1][x2]+sumI[y1][x1]);
+        }
     }
 
     public static void main(final String[] args) {

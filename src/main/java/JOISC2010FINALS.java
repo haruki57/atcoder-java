@@ -1,59 +1,99 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A24 {
+public class JOISC2010FINALS {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
+
+    static class UnionFind {
+        int[] par;
+        int[] size;
+
+        public UnionFind(int n) {
+            par = new int[n + 1];
+            size = new int[n + 1];
+            Arrays.fill(par, -1);
+            Arrays.fill(size, 1);
+        }
+
+        int root(int x){
+            while(true) {
+                if(par[x] == -1) {
+                    break;
+                }
+                x = par[x];
+            }
+            return x;
+        }
+
+        void unite(int u, int v) {
+            int rootU = root(u);
+            int rootV = root(v);
+            if(rootU == rootV) {
+                return;
+            }
+            if(size[rootU] < size[rootV]) {
+                par[rootU] = rootV;
+                size[rootV] += size[rootU];
+            }
+            else {
+                par[rootV] = rootU;
+                size[rootU] += size[rootV];
+            }
+        }
+
+        boolean same(int u, int v) {
+            return root(u) == root(v);
+        }
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] c = new int[N];
-        Arrays.setAll(c, i -> scanner.nextInt());
-        int[] dp = new int[N];
-        Arrays.fill(dp, INF);
-        dp[0] = c[0];
-        for (int i = 1; i < N; i++) {
-            /*
-            O(N^2)
-            int maxIdx = -1;
-            for (int j = 0; j < i; j++) {
-                if (c[i] > dp[j]) {
-                    maxIdx = j;
-                }
-            }
-            if (maxIdx != -1) {
-                dp[maxIdx+1] = c[i];
-            }
-            */
-            int ok=-1, ng=N;
-            while(Math.abs(ok-ng) > 1) {
-                int mid = (ok+ng) /2;
-                if (c[i] > dp[mid]) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            if (ok+1<dp.length) {
-                dp[ok+1] = c[i];
-            }
-            //System.out.println(ok + " "+ ng);
-            //System.out.println(Arrays.toString(dp));
+        int M = scanner.nextInt();
+        int K = scanner.nextInt();
+        //List<int[]>[] graph = new List[N];
+        for (int i = 0; i < N; i++) {
+//            graph[i] = new ArrayList<>();
         }
-        //System.out.println(Arrays.toString(dp));
-        int ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i]!=INF) {
-                ans = i;
-            }
+        int[][] edges = new int[M][3];
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            int c = scanner.nextInt();
+//            graph[a].add(new int[]{b, c});
+//            graph[b].add(new int[]{a, c});
+            edges[i][0]=a;
+            edges[i][1]=b;
+            edges[i][2]=c;
         }
-        //System.out.println(N - ans - 1);
-        System.out.println(ans+1);
+        Arrays.sort(edges, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[2]-o2[2];
+            }
+        });
+        for (int i = 0; i < M; i++) {
+            //System.out.println(Arrays.toString(edges[i]));
+        }
+        var uf = new UnionFind(N);
+        long ans = 0;
+        int len = N-K;
+        for (int i = 0; i < len; i++) {
+            int a = edges[i][0];
+            int b = edges[i][1];
+            int c = edges[i][2];
+            //System.out.println(a + " " + b + " "+ c);
+            if (uf.same(a,b)) {
+                len++;
+                continue;
+            }
+            uf.unite(a,b);
+            ans += c;
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
