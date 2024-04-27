@@ -4,40 +4,35 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ABC347B {
+public class ABC329B {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int W = scanner.nextInt();
-        int B = scanner.nextInt();
-        String piano = "wbwbwwbwbwbw";
-        for (int i = 0; i < 100; i++) {
-            piano += "wbwbwwbwbwbw";
-        }
-        boolean ans = false;
-        for (int i = 0; i < piano.length() - W - B; i++) {
-            String sub = piano.substring(i, i + W+ B);
-            int wCount = 0, bCount= 0;
-            for (int j = 0; j < sub.length(); j++) {
-                if (sub.charAt(j) == 'w') {
-                    wCount++;
-                } else {
-                    bCount++;
-                }
-            }
-            if (wCount == W && bCount == B) {
-                ans = true;
+        int N = scanner.nextInt();
+        int[] a = new int[N];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        Arrays.sort(a);
+        int max = a[N-1];
+        for (int i = 0; i < a.length; i++) {
+            int ii = a.length-i-1;
+            if (max != a[ii]) {
+                System.out.println(a[ii]);
+                return;
             }
         }
-        out.println(ans ? "Yes" : "No");
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

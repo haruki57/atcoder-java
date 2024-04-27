@@ -13,16 +13,11 @@ public class ABC345B {
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         long l = scanner.nextLong();
-        if (l%10==0) {
-            out.println(l/10);
-                    return;
-        }
         if (l >=0) {
             out.println((l + 9) / 10);
         } else {
-            out.println((l + 9) / 10 - 1);
+            out.println(l / 10);
         }
-
     }
 
     public static void main(final String[] args) {

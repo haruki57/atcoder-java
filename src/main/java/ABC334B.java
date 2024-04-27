@@ -1,66 +1,47 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
-public class ABC345C {
+public class ABC334B {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        char[] s = scanner.next().toCharArray();
-        int[] cnt = new int[26];
-        long ans = 0;
-        for (int i = 0; i < s.length; i++) {
-            cnt[s[i]-'a']++;
-            if (cnt[s[i]-'a']>=2) {
-                ans=1;
-            }
+        long A = scanner.nextLong();
+        long M = scanner.nextLong();
+        long L = scanner.nextLong();
+        long R = scanner.nextLong();
+        long max = (R-A)/M;
+        long min = (L-A)/M;
+        //System.out.println(min +" "+ max);
+        if (A+max*M > R) {
+            max--;
         }
 
-        int[][] sum = new int[s.length+1][26];
-        for (int i = 1; i <= s.length; i++) {
-            for (int j = 0; j < 26; j++) {
-                sum[i][j] = sum[i-1][j] + (s[i-1]-'a'==j ? 1:0);
-            }
+        if (A+min*M < L) {
+            min++;
         }
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < sum.length; j++) {
-                //System.out.print(sum[j][i] + " ");
-            }
-            //System.out.println();
+        //System.out.println(min +" "+ max);
+        if (min > max) {
+            System.out.println(0);
+            return;
         }
-        for (int i = 0; i < s.length-1; i++) {
-            for (int j = 0; j < 26; j++) {
-                if (s[i]-'a'==j) {continue;}
-                ans += sum[s.length][j]-sum[i][j];
-            }
-        }
-        System.out.println(ans);
-/*
-        Set<String> set = new HashSet<>();
-        for (int i = 0; i < s.length; i++) {
-            for (int j = i+1; j < s.length; j++) {
-                char tmp = s[i];
-                s[i]=s[j];
-                s[j]=tmp;
-                set.add(String.valueOf(s));
-                tmp = s[i];
-                s[i]=s[j];
-                s[j]=tmp;
-            }
-        }
-        System.out.println(set.size());
- */
+
+        System.out.println(Math.abs(max-min)+1);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

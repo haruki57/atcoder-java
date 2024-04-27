@@ -2,9 +2,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 public class ABC347C {
     static int MOD = 1000000007;
@@ -12,26 +10,41 @@ public class ABC347C {
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        long K = scanner.nextLong();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        long ans = K * (K + 1) / 2;
-        Set<Integer> set = new HashSet<>();
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] <= K)
-                set.add(a[i]);
+        int A = scanner.nextInt();
+        int B = scanner.nextInt();
+        int sum = A+B;
+        int[] d = new int[N];
+        Arrays.setAll(d, i -> scanner.nextInt());
+        for (int i = 0; i < d.length; i++) {
+            d[i] = d[i]%sum;
         }
-        for (Integer num : set) {
-            ans -= num;
+        Arrays.sort(d);
+        int[] dd = new int[N+1];
+        for (int i = 0; i < d.length; i++) {
+            dd[i]=d[i];
         }
-        out.println(ans);
+        dd[dd.length-1] = d[0]+sum;
+        // System.out.println(Arrays.toString(dd));
+
+        for (int i = 0; i < dd.length - 1; i++) {
+            if (dd[i+1]-dd[i] > B) {
+                System.out.println("Yes");
+                return;
+            }
+        }
+        System.out.println("No");
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {
