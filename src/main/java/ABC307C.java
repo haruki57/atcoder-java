@@ -11,26 +11,129 @@ public class ABC307C {
     static void run (final FastScanner scanner, final PrintWriter out) {
         int HA = scanner.nextInt();
         int WA = scanner.nextInt();
-        char[][] a = new char[HA][];
+        char[][] a = new char[10][10];
+        for (int i = 0; i < a.length; i++) {
+            Arrays.fill(a[i], '.');
+        }
         for (int i = 0; i < HA; i++) {
-            a[i]=scanner.next().toCharArray();
+            char[] s = scanner.next().toCharArray();
+            for (int j = 0; j < 10; j++) {
+                if (j<s.length)
+                    a[i][j] = s[j];
+            }
         }
 
         int HB = scanner.nextInt();
         int WB = scanner.nextInt();
-        char[][] b = new char[HB][];
-        for (int i = 0; i < HB; i++) {
-            b[i]=scanner.next().toCharArray();
+        char[][] b = new char[10][10];
+        for (int i = 0; i < b.length; i++) {
+            Arrays.fill(b[i], '.');
         }
-
+        for (int i = 0; i < HB; i++) {
+            char[] s = scanner.next().toCharArray();
+            for (int j = 0; j < 10; j++) {
+                if (j<s.length)
+                    b[i][j] = s[j];
+            }
+        }
 
         int HX = scanner.nextInt();
         int WX = scanner.nextInt();
-        char[][] x = new char[HX][];
+        char[][] x = new char[10][10];
+        for (int i = 0; i < x.length; i++) {
+            Arrays.fill(x[i], '.');
+        }
         for (int i = 0; i < HX; i++) {
-            x[i]=scanner.next().toCharArray();
+            char[] s = scanner.next().toCharArray();
+            for (int j = 0; j < 10; j++) {
+                if (j<s.length)
+                    x[i][j] = s[j];
+            }
         }
 
+        for (int i = 0; i < 40; i++) {
+            for (int j = 0; j < 40; j++) {
+                var sheet = makeSheet(a, b, i, j);
+                //printSheet(sheet);
+                if (ok(x, sheet)) {
+                    System.out.println("Yes");
+                    return;
+                }
+            }
+        }
+        System.out.println("No");
+    }
+
+    private static void printSheet(char[][] sheet) {
+        for (int i = 0; i < sheet.length; i++) {
+            System.out.println(sheet[i]);
+        }
+        System.out.println();
+    }
+
+    private static boolean ok(char[][] x, char[][] sheet) {
+        int cntX=0,cntSheet=0;
+        for (int i = 0; i < x.length; i++) {
+            for (int j = 0; j < x[i].length; j++) {
+                if (x[i][j]=='#') cntX++;
+            }
+        }
+        for (int i = 0; i < sheet.length; i++) {
+            for (int j = 0; j < sheet[i].length; j++) {
+                if (sheet[i][j]=='#')cntSheet++;
+            }
+        }
+        if (cntX != cntSheet) {
+            return false;
+        }
+        int len = x[0].length;
+        for (int i = 0; i < sheet.length - x.length; i++) {
+            for (int j = 0; j < sheet[i].length - len; j++) {
+                boolean ok = true;
+                //System.out.println(i+" "+j);
+                for (int k = 0; k < x.length; k++) {
+                    for (int l = 0; l < x[k].length; l++) {
+                        int yy = i+k;
+                        int xx = j+l;
+                        if (x[k][l]!=sheet[yy][xx]) {
+                            ok = false;
+                        }
+                    }
+                }
+                if (ok) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static char[][] makeSheet(char[][] a, char[][] b, int y, int x) {
+        char[][] ret = new char[61][61];
+        for (int i = 0; i < ret.length; i++) {
+            Arrays.fill(ret[i], '.');
+        }
+
+        int centerY = ret.length /2, centerX = ret.length/2;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                int yy = i + centerY;
+                int xx = j + centerX;
+                if (a[i][j]=='#') {
+                    ret[yy][xx] = '#';
+                }
+            }
+        }
+        for (int i = 0; i < b.length; i++) {
+            for (int j = 0; j < b[i].length; j++) {
+                int yy = i + y;
+                int xx = j + x;
+                if (b[i][j]=='#') {
+                    ret[yy][xx] = '#';
+                }
+            }
+        }
+        return ret;
     }
 
     public static void main(final String[] args) {
