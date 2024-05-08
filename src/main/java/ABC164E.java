@@ -1,66 +1,96 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
-public class ABC347D {
+public class ABC164E {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int a = scanner.nextInt();
-        int b = scanner.nextInt();
-        long C = scanner.nextLong();
-        long x = 0;
-        long y = 0;
-        for (int i = 0; i < 61; i++) {
-            if (((1L<<i) & C) >= 1) {
-                int bcx =Long.bitCount(x);
-                int bcy = Long.bitCount(y);
-                if (a-bcx > b-bcy) {
-                    x |= 1L<<i;
-                } else {
-                    y |= 1L<<i;
+        int N = scanner.nextInt();
+        int M = scanner.nextInt();
+        int S = scanner.nextInt();
+        S = Math.min(3000, S);
+        List<int[]>[] graph = new List[N];
+        for (int i = 0; i < N; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < M; i++) {
+            int u = scanner.nextInt()-1;
+            int v = scanner.nextInt()-1;
+            int cost = scanner.nextInt();
+            int time = scanner.nextInt();
+            graph[u].add(new int[]{v, cost, time});
+            graph[v].add(new int[]{u, cost, time});
+        }
+        int[][] changes = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            int c = scanner.nextInt();
+            int d = scanner.nextInt();
+            changes[i][0]=c;
+            changes[i][1]=d;
+        }
+        PriorityQueue<long[]> q = new PriorityQueue<>((o1, o2) -> Long.compare(o1[1],o2[1]));
+        long[][] shortest = new long[N][3009];
+        for (int i = 0; i < N; i++) {
+            Arrays.fill(shortest[i], (long)INF*INF);
+        }
+        shortest[0][S] = 0;
+        q.add(new long[]{0, 0, S});
+        while(!q.isEmpty()) {
+            long[] poll = q.poll();
+            int cur = (int)poll[0];
+            long time = poll[1];
+            int coinNum = (int)poll[2];
+
+            // change
+            {
+                int changeNum = changes[cur][0];
+                int changeTime = changes[cur][1];
+                long nextTime = time + changeTime;
+                int nextCoinNum = Math.min(coinNum + changeNum, 3000);
+                if (nextCoinNum < 3000) {
+                    if(shortest[cur][nextCoinNum] > nextTime) {
+                        shortest[cur][nextCoinNum] = nextTime;
+                        q.add(new long[]{cur, nextTime, nextCoinNum});
+                    }
                 }
             }
-            if (ok(x,y,a,b,C)) {
-                System.out.println(x+" "+y);
-                return;
-            }
-        }
-        //System.out.println(Long.toBinaryString(C));
-        //System.out.println(Long.toBinaryString(x)+" "+Long.toBinaryString(y));
-        for (int i = 0; i < 61; i++) {
-            if (((1L<<i) & C) == 0) {
-                if (Long.bitCount(x) < a && Long.bitCount(y)< b) {
-                    x |= 1L<<i;
-                    y |= 1L<<i;
+            for (int[] arr : graph[cur]) {
+                int next = arr[0];
+                int ncost = arr[1];
+                int ntime = arr[2];
+                int nCoinNum = coinNum - ncost;
+                if (nCoinNum < 0) {
+                    continue;
+                }
+                long time2 = time + ntime;
+                if (shortest[next][nCoinNum] > time2) {
+                    shortest[next][nCoinNum] = time2;
+                    q.add(new long[]{next, time2, nCoinNum});
                 }
             }
-            if (ok(x,y,a,b,C)) {
-                System.out.println(x+" "+y);
-                return;
-            }
         }
-        //System.out.println(Long.toBinaryString(x)+" "+Long.toBinaryString(y));
-        System.out.println(-1);
+        for (int i = 1; i < N; i++) {
+            long min = (long)INF*INF;
+            for (int j = 0; j < shortest[i].length; j++) {
+                min = Math.min(min, shortest[i][j]);
+            }
+            out.println(min);
+        }
     }
-
-    private static boolean ok(long x,long y, int a,int b, long c) {
-        int bcx = Long.bitCount(x);
-        int bcy = Long.bitCount(y);
-        return (bcx==a&&bcy==b&&(x^y)==c);
-    }
-
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {
