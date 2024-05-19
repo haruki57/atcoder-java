@@ -4,65 +4,21 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ABC318D {
+public class ABC354B {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[][] graph = new int[N][N];
+        int sum = 0;
+        String[] s = new String[N];
         for (int i = 0; i < N; i++) {
-            for (int j = i+1; j < N; j++) {
-                graph[i][j]=graph[j][i]= scanner.nextInt();
-            }
+            s[i]= scanner.next();
+            sum+= scanner.nextInt();
+            sum %=N;
         }
-        long[] dp = new long[(1<<N)];
-        long max = 0;
-        for (int prevBit = 0; prevBit < dp.length; prevBit++) {
-            if (Integer.bitCount(prevBit) % 2 == 1) {
-                continue;
-            }
-            for (int j = 0; j < N; j++) {
-                for (int k = 0; k < N; k++) {
-                    int currentBit = prevBit + (1<<j) + (1<<k);
-                    if (Integer.bitCount(prevBit) +2!= Integer.bitCount(currentBit)) {
-                        continue;
-                    }
-                    /*
-                    System.out.println(Integer.toBinaryString(prevBit));
-                    System.out.println(Integer.toBinaryString(currentBit));
-                    System.out.println(Integer.toBinaryString(prevBit)+" "+j+" "+k);
-                    System.out.println(dp[prevBit]+" "+graph[j][k]);
-                     */
-                    dp[currentBit] = Math.max(dp[currentBit], dp[prevBit]+graph[j][k]);
-                    max = Math.max(dp[currentBit],max);
-                }
-            }
-
-        }
-        System.out.println(max);
-    }
-
-    static long bt(int depth, int[][] g, int bit, long cost) {
-        if (g.length - depth <= 1) {
-            return cost;
-        }
-        long ret = 0;
-        for (int i = 0; i < g.length; i++) {
-            for (int j = i+1; j < g.length; j++) {
-                if (i==j) {
-                    continue;
-                }
-                if (((1<<i)&bit) > 0) {
-                    continue;
-                }
-                if (((1<<j)&bit) > 0) {
-                    continue;
-                }
-                ret = Math.max(ret, bt(depth+2, g, bit + (1<<i) + (1<<j), cost + g[i][j]));
-            }
-        }
-        return ret;
+        Arrays.sort(s);
+        System.out.println(s[sum%N]);
     }
 
     public static void main(final String[] args) {

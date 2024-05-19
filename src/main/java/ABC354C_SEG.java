@@ -1,68 +1,95 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class ABC318D {
+public class ABC354C_SEG {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
-    static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[][] graph = new int[N][N];
-        for (int i = 0; i < N; i++) {
-            for (int j = i+1; j < N; j++) {
-                graph[i][j]=graph[j][i]= scanner.nextInt();
-            }
-        }
-        long[] dp = new long[(1<<N)];
-        long max = 0;
-        for (int prevBit = 0; prevBit < dp.length; prevBit++) {
-            if (Integer.bitCount(prevBit) % 2 == 1) {
-                continue;
-            }
-            for (int j = 0; j < N; j++) {
-                for (int k = 0; k < N; k++) {
-                    int currentBit = prevBit + (1<<j) + (1<<k);
-                    if (Integer.bitCount(prevBit) +2!= Integer.bitCount(currentBit)) {
-                        continue;
-                    }
-                    /*
-                    System.out.println(Integer.toBinaryString(prevBit));
-                    System.out.println(Integer.toBinaryString(currentBit));
-                    System.out.println(Integer.toBinaryString(prevBit)+" "+j+" "+k);
-                    System.out.println(dp[prevBit]+" "+graph[j][k]);
-                     */
-                    dp[currentBit] = Math.max(dp[currentBit], dp[prevBit]+graph[j][k]);
-                    max = Math.max(dp[currentBit],max);
-                }
-            }
 
+    // 1-indexed!
+    static class SegmentTree {
+        public int[] dat = new int[600000];
+        public int size = 1;
+
+        void init(int N) {
+            size = 1;
+            while(size < N) {
+                size *= 2;
+            }
+            Arrays.fill(dat, 0);
         }
-        System.out.println(max);
+
+        void update(int pos, int x) {
+            pos = pos + size - 1;
+            dat[pos] = x;
+            while(pos >= 2) {
+                pos /= 2;
+                dat[pos] = Math.max(dat[pos * 2], dat[pos * 2 + 1]);
+            }
+        }
+
+        int query (int l, int r, int a, int b, int u) {
+            if (r <= a || b <= l) {
+                return -1000000000;
+            }
+            if (l <= a && b <= r) {
+                return dat[u];
+            }
+            int m = (a + b) / 2;
+            int answerL = query(l, r, a, m, u*2);
+            int answerR = query(l, r, m, b, u*2 + 1);
+            return Math.max(answerL, answerR);
+        }
+
+        int query(int l, int r) {
+            return query(l, r, 1, size + 1, 1);
+        }
     }
 
-    static long bt(int depth, int[][] g, int bit, long cost) {
-        if (g.length - depth <= 1) {
-            return cost;
+    static void run (final FastScanner scanner, final PrintWriter out) {
+        int N = scanner.nextInt();
+        int[][] orderByA = new int[N][3];
+        for (int i = 0; i < N; i++) {
+            orderByA[i][0]=scanner.nextInt();
+            orderByA[i][1]=scanner.nextInt();
+            orderByA[i][2]=i+1;
         }
-        long ret = 0;
-        for (int i = 0; i < g.length; i++) {
-            for (int j = i+1; j < g.length; j++) {
-                if (i==j) {
-                    continue;
-                }
-                if (((1<<i)&bit) > 0) {
-                    continue;
-                }
-                if (((1<<j)&bit) > 0) {
-                    continue;
-                }
-                ret = Math.max(ret, bt(depth+2, g, bit + (1<<i) + (1<<j), cost + g[i][j]));
+        Arrays.sort(orderByA, (o1, o2) -> -(o1[0]-o2[0]));
+        var seg = new SegmentTree();
+        seg.init(N);
+        for (int i = 0; i < N; i++) {
+            seg.update(i+1, -orderByA[i][1]);
+        }
+
+        for (int i = 0; i < N; i++) {
+            //System.out.println(orderByA[i][0] + " " + orderByA[i][1]);
+        }
+        for (int i = 1; i < N; i++) {
+            int min = -seg.query(1, i+1);
+
+            // System.out.println(min);
+            if (min < orderByA[i][1]) {
+                orderByA[i][2]=-1;
             }
         }
-        return ret;
+
+
+        List<Integer> answer = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            if (orderByA[i][2]!=-1) {
+                answer.add(orderByA[i][2]);
+            }
+        }
+        Collections.sort(answer);
+
+        out.println(answer.size());
+        for (Integer i : answer) {
+            out.print(i+" ");
+        }
+        out.println();
     }
 
     public static void main(final String[] args) {
