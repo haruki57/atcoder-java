@@ -1,19 +1,45 @@
-package main.java;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
-    static int MOD = 998244353;
+public class ABC075B {
+    static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int H = scanner.nextInt();
+        int W = scanner.nextInt();
+        char[][]s  =new char[H+2][W+2];
+        for (int i = 0; i < H; i++) {
+            String ss = scanner.next();
+            for (int j = 0; j < W; j++) {
+                s[i+1][j+1]=ss.charAt(j);
+            }
+        }
+        char[][] ans  =new char[H][W];
+        int[] dy = {1,1,1,0,   -1,-1,-1,0};
+        int[] dx = {1,0,-1,-1, -1,0,1,1};
+        for (int i = 0; i < H; i++) {
+            for (int j = 0; j < W; j++) {
+                if (s[i+1][j+1]=='#') {
+                    ans[i][j]='#';
+                    continue;
+                }
+                int cnt = 0;
+                for (int k = 0; k < dy.length; k++) {
+                    int ii = i+1+dy[k];
+                    int jj = j+1+dx[k];
+                    if (s[ii][jj]=='#') {
+                        cnt++;
+                    }
+                }
+                ans[i][j]=(char)('0'+cnt);
+            }
+        }
+        for (int i = 0; i < ans.length; i++) {
+            System.out.println(ans[i]);
+        }
     }
 
     public static void main(final String[] args) {

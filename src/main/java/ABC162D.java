@@ -1,19 +1,53 @@
-package main.java;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
-    static int MOD = 998244353;
+public class ABC162D {
+    static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        char[] s = scanner.next().toCharArray();
+        int[] r = new int[N+1];
+        for (int i = 0; i < s.length; i++) {
+            r[i+1]=r[i]+(s[i]=='R'?1:0);
+        }
+        int[] g = new int[N+1];
+        for (int i = 0; i < s.length; i++) {
+            g[i+1]=g[i]+(s[i]=='G'?1:0);
+        }
+        int[] b = new int[N+1];
+        for (int i = 0; i < s.length; i++) {
+            b[i+1]=b[i]+(s[i]=='B'?1:0);
+        }
+        long ans = 0;
+        for (int i = 0; i < s.length; i++) {
+            for (int j = i+1; j < s.length; j++) {
+                int diff = j-i;
+                int[] arr = null;
+                char c = 0;
+                if (s[i]=='R' && s[j]=='G' || s[i]=='G' && s[j]=='R') {
+                    arr = b;
+                    c = 'B';
+                } else if (s[i]=='R' && s[j]=='B' || s[i]=='B' && s[j]=='R') {
+                    arr = g;
+                    c = 'G';
+                } if (s[i]=='G' && s[j]=='B' || s[i]=='B' && s[j]=='G') {
+                    arr = r;
+                    c = 'R';
+                }
+                if (arr==null) {
+                    continue;
+                }
+                ans += arr[arr.length-1]-arr[j];
+                if (j+diff < s.length && s[j+diff] == c) {
+                    ans--;
+                }
+            }
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {

@@ -1,19 +1,71 @@
-package main.java;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
+public class ABC253E {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
+    private static long powWithMod(long a, long b, int mod) {
+        String binaryString = Long.toBinaryString(b);
+        int len = binaryString.length();
+        long ret = 1;
+        for (int i = 0; i < len; i++) {
+            if (binaryString.charAt(len-i-1) == '1') {
+                ret = (ret * a) % mod;
+            }
+            a = (a*a) % mod;
+        }
+        return ret;
+    }
+
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int M = scanner.nextInt();
+        int K = scanner.nextInt();
+        if (K==0) {
+            System.out.println(powWithMod(M, N, MOD));
+            return;
+        }
+        long[][] dp = new long[N][M+1];
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[0].length; j++) {
+                dp[i][j]=0;
+            }
+        }
+        long[] sum = new long[M+2];
+        for (int i = 1; i < M + 1; i++) {
+            dp[0][i]=1;
+            sum[i+1]=sum[i]+1;
+        }
+
+        for (int i = 1; i < N; i++) {
+            for (int j = 1; j < M + 1; j++) {
+                int jj = j-K+1;
+                int jjj = j+K;
+                if (jj>=0) {
+                    dp[i][j] += sum[jj];
+                    dp[i][j]%=MOD;
+                }
+                if (jjj<sum.length) {
+                    dp[i][j] += (sum[sum.length-1] - sum[jjj]+MOD);
+                    dp[i][j]%=MOD;
+                }
+            }
+            Arrays.fill(sum,0);
+            for (int j = 1; j < M + 1; j++) {
+                sum[j+1]=sum[j]+dp[i][j];
+                sum[j+1]%=MOD;
+            }
+        }
+        long ans = 0;
+        for (int i = 0; i < dp[0].length; i++) {
+            ans += dp[dp.length-1][i];
+            ans %= MOD;
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {

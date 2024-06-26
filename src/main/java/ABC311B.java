@@ -1,19 +1,37 @@
-package main.java;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _Template {
-    static int MOD = 998244353;
+public class ABC311B {
+    static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
+        int D = scanner.nextInt();
+        char[][] s = new char[N][];
+        for (int i = 0; i < N; i++) {
+            s[i]=scanner.next().toCharArray();
+        }
+        int succ = 0;
+        int ans = 0;
+        for (int i = 0; i < D; i++) {
+
+            boolean allOK = true;
+            for (int j = 0; j < N; j++) {
+                if (s[j][i]=='x')
+                    allOK = false;
+            }
+            if (allOK) {
+                succ++;
+            } else {
+                succ = 0;
+            }
+            ans = Math.max(ans, succ);
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
