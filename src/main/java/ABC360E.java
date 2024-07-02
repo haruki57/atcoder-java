@@ -8,56 +8,46 @@ public class ABC360E {
     static long MOD = 998244353L;
     static int INF = Integer.MAX_VALUE/2;
 
-    private static long powWithMod(long a, long b, long mod) {
-        String binaryString = Long.toBinaryString(b);
-        int len = binaryString.length();
-        long ret = 1;
-        for (int i = 0; i < len; i++) {
-            if (binaryString.charAt(len-i-1) == '1') {
-                ret = (ret * a) % mod;
-            }
-            a = (a*a) % mod;
-        }
-        return ret;
-    }
+    static long modInv(long a, long mod) {
+        long x0 = 1;
+        long y0 = 0;
+        long x1 = 0;
+        long y1 = 1;
+        long b = mod;
+        while ( b != 0 ) {
+            long q = a / b;
+            long tmp = b;
+            b = a % b;
+            a = tmp;
 
-    static long pq(long p,long q, long mod) {
-        long denominator = powWithMod(q, mod-2, mod);
-        return p * denominator % mod;
+            tmp = x1;
+            x1 = x0 - q * x1;
+            x0 = tmp;
+
+            tmp = y1;
+            y1 = y0 - q * y1;
+            y0 = tmp;
+        }
+        return (x0 + mod) % mod;
     }
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         long N = scanner.nextInt();
         int K = scanner.nextInt();
-        /*
-        long[][][] dp = new long[K+1][2][2];
-        dp[0][0][0]=1;
-        dp[0][0][1]=1;
-        dp[0][1][0]=0;
-        dp[0][1][1]=1;
-        for (int i = 1; i <= K; i++) {
-            dp[i][0][0]=dp[i-1][0][0]*(N+(N-1)*(N-2))+dp[i-1][1][0]*2*(N-1);
-            dp[i][0][1]=dp[i][0][1]*N;
-            dp[i][1][0]=dp[i-1][1][0]*(N+(N-1)*(N-2))+dp[i-1][0][0]*2*(N-1);
-            dp[i][1][1]=dp[i][1][1]*N;
-        }*/
-
-        long[][] dp = new long[K+1][2];
-        dp[0][0]=1;
-        dp[0][1]=0;
-        for (int i = 1; i <= K; i++) {
-            dp[i][0]=dp[i-1][0]*(N*(N-1))+dp[i-1][1]*(N-1)*2;
-            dp[i][0]%=MOD;
-            dp[i][1]=dp[i-1][1]*(N*(N-1))+dp[i-1][0]*2*(N-1);
-            dp[i][1]%=MOD;
+        long x = 1;
+        long p = 2 * modInv(N*N, MOD);
+        for (int i = 0; i < K; i++) {
+            x = (((x * (1-(p*(N-1+MOD)%MOD))) % MOD
+                    + (1-x+MOD)%MOD * p)) % MOD
+                    % MOD;
         }
+        // 1-x / N-1
+        long xx = (1-x+MOD)%MOD * modInv(N-1, MOD) % MOD;
+        long sum = (N*(N+1%MOD)%MOD*modInv(2, MOD) - 1 + MOD)%MOD;
+        System.out.println((x + sum*xx)%MOD);
 
-        for (int i = 0; i <= K; i++) {
-            System.out.println(Arrays.toString(dp[i]));
-        }
-
-        // 153(33 + 24*2+24*3) / 81
-        System.out.println(pq(17,9, MOD));// 554580198
+        // 153(=33 + 24*2+24*3) / 81
+        //System.out.println(pq(17,9, MOD));// 554580198
     }
 
     public static void main(final String[] args) {
