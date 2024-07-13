@@ -1,88 +1,69 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 
-public class ABC184E {
+public class ABC362C {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
-    static List<int[]>[] lists = new List[26];
+
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int H = scanner.nextInt();
-        int W = scanner.nextInt();
-        char[][] map = new char[H][W];
-        for (int i = 0; i < map.length; i++) {
-            Arrays.fill(map[i], '#');
+        int N = scanner.nextInt();
+        long[][] a = new long[N][2];
+        for (int i = 0; i < a.length; i++) {
+            a[i][0]= scanner.nextInt();
+            a[i][1]= scanner.nextInt();
         }
-        int sy=1, sx=1, gy=1, gx=1;
-        for (int i = 0; i < H; i++) {
-            String s = scanner.next();
-            for (int j = 0; j < W; j++) {
-                map[i][j]= s.charAt(j);
-                if (map[i][j]=='S') {
-                    sy=i;
-                    sx=j;
-                } else if (map[i][j]=='G') {
-                    gy=i;
-                    gx=j;
-                }
+        long[] x = new long[N];
+        long sum = 0;
+        long plus = 0;
+        for (int i = 0; i < x.length; i++) {
+            x[i]=a[i][0];
+            sum += x[i];
+            plus += a[i][1]-a[i][0];
+        }
+        //System.out.println(sum +" "+plus);
+        if (sum > 0) {
+            System.out.println("No");
+            return;
+        }
+        if (sum == 0){
+            out.println("Yes");
+            for (int i = 0; i < x.length; i++) {
+                out.print(x[i]+ " ");
             }
+            return;
         }
-        for (int i = 0; i < lists.length; i++) {
-            lists[i]=new ArrayList<>();
-        }
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; j++) {
-                if ('a' <= map[i][j] && map[i][j] <= 'z') {
-                    lists[map[i][j]-'a'].add(new int[]{i, j});
-                }
-            }
-        }
-        int[][] shortest = bfs(map, sy, sx);
-        if (shortest[gy][gx]==INF) {
-            shortest[gy][gx]=-1;
-        }
-        System.out.println(shortest[gy][gx]);
 
-        for (int i = 0; i < shortest.length; i++) {
-            //System.out.println(Arrays.toString(shortest[i]));
-        }
-    }
+        // sum is negative
 
-    static int[][] bfs(char[][] map, int sy,int sx) {
-        int H = map.length;
-        int W = map[0].length;
-        Queue<int[]> q = new LinkedList<>();
-        q.add(new int[]{sy, sx, 0});
-        int[][] shortest = new int[H][W];
-        for (int i = 0; i < shortest.length; i++) {
-            Arrays.fill(shortest[i], INF);
+        sum *= -1;
+        if (sum > plus) {
+            System.out.println("No");
+            return;
         }
-        shortest[sy][sx] = 0;
-        int[] dy = {0,0,1,-1};
-        int[] dx = {1,-1,0,0};
-        while(!q.isEmpty()) {
-            int[] polled = q.poll();
-            int y = polled[0];
-            int x = polled[1];
-            int dist = polled[2];
-            for (int i = 0; i < 4; i++) {
-                int yy = y+dy[i];
-                int xx = x+dx[i];
-                if (yy < 0 || yy >= H || xx < 0 || xx >= W) {
-                    continue;
-                }
-                if (map[yy][xx]=='#') {
-                    continue;
-                }
-                if (shortest[yy][xx]!=INF) {
-                    continue;
-                }
-                shortest[yy][xx]=dist+1;
-                q.add(new int[]{yy, xx, dist+1});
+
+        //System.out.println(Arrays.toString(x));
+        for (int i = 0; i < x.length; i++) {
+            long diff = a[i][1]-a[i][0];
+            if (diff < sum) {
+                x[i] += diff;
+                sum -= diff;
+            } else {
+                x[i] += sum;
+                break;
             }
         }
-        return shortest;
+
+        out.println("Yes");
+        long checkSum = 0;
+        for (int i = 0; i < x.length; i++) {
+            out.print(x[i]+ " ");
+            checkSum+=x[i];
+        }
+        out.println();
+        //out.println(checkSum);
     }
 
     public static void main(final String[] args) {

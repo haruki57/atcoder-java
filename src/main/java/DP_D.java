@@ -1,88 +1,60 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 
-public class ABC184E {
+public class DP_D {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
-    static List<int[]>[] lists = new List[26];
+    static long lINF = Long.MAX_VALUE/2;
+
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int H = scanner.nextInt();
+        int N = scanner.nextInt();
         int W = scanner.nextInt();
-        char[][] map = new char[H][W];
-        for (int i = 0; i < map.length; i++) {
-            Arrays.fill(map[i], '#');
+        int[][] wv = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            wv[i][0]= scanner.nextInt();
+            wv[i][1]= scanner.nextInt();
         }
-        int sy=1, sx=1, gy=1, gx=1;
-        for (int i = 0; i < H; i++) {
-            String s = scanner.next();
-            for (int j = 0; j < W; j++) {
-                map[i][j]= s.charAt(j);
-                if (map[i][j]=='S') {
-                    sy=i;
-                    sx=j;
-                } else if (map[i][j]=='G') {
-                    gy=i;
-                    gx=j;
+        long[][] dp = new long[N][109 * 1009];
+        for (int i = 0; i < dp.length; i++) {
+            Arrays.fill(dp[i], lINF);
+        }
+        dp[0][wv[0][1]]=wv[0][0];
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                dp[i][j]=Math.min(dp[i][j], dp[i-1][j]);
+                if (j==wv[i][1]) {
+                    dp[i][j]=Math.min(Math.min(dp[i][j], dp[i-1][j]), wv[i][0]);
+                }
+                int jj = j+wv[i][1];
+                if (jj >= dp[i].length) {
+                    continue;
+                }
+                dp[i][jj]=Math.min(dp[i][jj], dp[i-1][j]+wv[i][0]);
+            }
+        }
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[0].length; j++) {
+                if(dp[i][j]==lINF) {
+                    //dp[i][j]=0;
                 }
             }
         }
-        for (int i = 0; i < lists.length; i++) {
-            lists[i]=new ArrayList<>();
+        for (int i = 0; i < dp.length; i++) {
+            //System.out.println(Arrays.toString(dp[i]));
         }
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; j++) {
-                if ('a' <= map[i][j] && map[i][j] <= 'z') {
-                    lists[map[i][j]-'a'].add(new int[]{i, j});
+        long ans = 0;
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                if (dp[i][j]<=W) {
+                    ans = Math.max(ans, j);
                 }
             }
         }
-        int[][] shortest = bfs(map, sy, sx);
-        if (shortest[gy][gx]==INF) {
-            shortest[gy][gx]=-1;
-        }
-        System.out.println(shortest[gy][gx]);
+        System.out.println(ans);
 
-        for (int i = 0; i < shortest.length; i++) {
-            //System.out.println(Arrays.toString(shortest[i]));
-        }
-    }
-
-    static int[][] bfs(char[][] map, int sy,int sx) {
-        int H = map.length;
-        int W = map[0].length;
-        Queue<int[]> q = new LinkedList<>();
-        q.add(new int[]{sy, sx, 0});
-        int[][] shortest = new int[H][W];
-        for (int i = 0; i < shortest.length; i++) {
-            Arrays.fill(shortest[i], INF);
-        }
-        shortest[sy][sx] = 0;
-        int[] dy = {0,0,1,-1};
-        int[] dx = {1,-1,0,0};
-        while(!q.isEmpty()) {
-            int[] polled = q.poll();
-            int y = polled[0];
-            int x = polled[1];
-            int dist = polled[2];
-            for (int i = 0; i < 4; i++) {
-                int yy = y+dy[i];
-                int xx = x+dx[i];
-                if (yy < 0 || yy >= H || xx < 0 || xx >= W) {
-                    continue;
-                }
-                if (map[yy][xx]=='#') {
-                    continue;
-                }
-                if (shortest[yy][xx]!=INF) {
-                    continue;
-                }
-                shortest[yy][xx]=dist+1;
-                q.add(new int[]{yy, xx, dist+1});
-            }
-        }
-        return shortest;
     }
 
     public static void main(final String[] args) {
