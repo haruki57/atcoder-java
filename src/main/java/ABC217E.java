@@ -1,36 +1,32 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A2 {
+public class ABC217E {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        Arrays.sort(a);
-        //System.out.println(Arrays.toString(a));
-        int count = 0;
-        int[] answers = new int[N+1];
-        for (int i = N-1; i >= 0; i--) {
-            int now = a[i];
-            int j = i-1;
-            while(j>=0&&a[j]==now) {
-                j--;
+        int Q = scanner.nextInt();
+        Queue<Integer> q = new LinkedList<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for (int i = 0; i < Q; i++) {
+            int type = scanner.nextInt();
+            if (type==1) {
+                q.add(scanner.nextInt());
+            } else if(type==2) {
+                if(pq.size()>0) {
+                    out.println(pq.poll());
+                } else {
+                    out.println(q.poll());
+                }
+            } else {
+                while(!q.isEmpty()) {
+                    pq.add(q.poll());
+                }
             }
-            //System.out.println(now+" "+(i-j));
-            answers[count] = (i-j);
-            i=j+1;
-            count++;
         }
-        for (int i = 0; i < N; i++) {
-            out.println(answers[i]+" ");
-        }
-        out.println();
     }
 
     public static void main(final String[] args) {

@@ -1,32 +1,37 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 
-public class A4 {
+public class ABC265B {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int Q = scanner.nextInt();
-        Queue<Integer> q = new LinkedList<>();
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        for (int i = 0; i < Q; i++) {
-            int type = scanner.nextInt();
-            if (type==1) {
-                q.add(scanner.nextInt());
-            } else if(type==2) {
-                if(pq.size()>0) {
-                    out.println(pq.poll());
-                } else {
-                    out.println(q.poll());
-                }
-            } else {
-                while(!q.isEmpty()) {
-                    pq.add(q.poll());
-                }
+        int N = scanner.nextInt();
+        int M = scanner.nextInt();
+        long T = scanner.nextInt();
+        int[] a = new int[N-1];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] xy = new int[M][2];
+        for (int i = 0; i < M; i++) {
+            xy[i][0]= scanner.nextInt();
+            xy[i][1]= scanner.nextInt();
+        }
+        int j = 0;
+        for (int i = 0; i < a.length; i++) {
+            if (j < xy.length && i+1==xy[j][0]) {
+                T+=xy[j][1];
+                j++;
+            }
+            T -= a[i];
+            if (T<= 0){
+                System.out.println("No");
+                return;
             }
         }
+        System.out.println("Yes");
     }
 
     public static void main(final String[] args) {

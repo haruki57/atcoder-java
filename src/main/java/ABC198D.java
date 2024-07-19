@@ -1,47 +1,98 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A3 {
+public class ABC198D {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
+    static String NO = "UNSOLVABLE";
 
+    static char[] s1, s2, s3;
+    static int[] map = new int[256];
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int[][] c = new int[3][3];
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                c[i][j]= scanner.nextInt();
+        s1 = scanner.next().toCharArray();
+        s2 = scanner.next().toCharArray();
+        s3 = scanner.next().toCharArray();
+        var allCharacters = new TreeSet<Character>();
+        for (char[] chars : new char[][]{s1, s2, s3}) {
+            for (char c : chars) {
+                allCharacters.add(c);
             }
         }
-        for (int a1 = -200; a1 <= 200; a1++) {
-            for (int a2 = -200; a2 <= 200; a2++) {
-                for (int a3 = -200; a3 <= 200; a3++) {
-                    int b1_1 = c[0][0]-a1;
-                    int b2_1 = c[1][0]-a1;
-                    int b3_1 = c[2][0]-a1;
+        if (allCharacters.size() > 10) {
+            System.out.println("UNSOLVABLE");
+            return;
+        }
+        Map<Character, Integer> map = new HashMap<>();
+        for (int[] perm : new Permutations(10).perms) {
+            int ii = 0;
+            for (Character c : allCharacters) {
+                map.put(c, perm[ii]);
+                ii++;
+            }
+            //System.out.println(map);
+            char[] a1= s1;
+            char[] a2= s2;
+            char[] a3= s3;
+            if (map.get(a1[0])==0 || map.get(a2[0])==0 || map.get(a3[0])==0){
+                continue;
+            }
+            long num1 = toNum(a1, map);
+            long num2 = toNum(a2, map);
+            long num3 = toNum(a3, map);
+            if (num1+num2==num3) {
+                System.out.println(num1);
+                System.out.println(num2);
+                System.out.println(num3);
+                return;
+            }
+            map = new HashMap<>();
+        }
+        System.out.println("UNSOLVABLE");
+    }
 
-                    int b1_2 = c[0][1]-a2;
-                    int b2_2 = c[1][1]-a2;
-                    int b3_2 = c[2][1]-a2;
+    private static long toNum(char[] a1, Map<Character, Integer> map) {
+        long ret = 0;
+        for (int i = 0; i < a1.length; i++) {
+            int num = map.get(a1[i]);
+            ret *= 10;
+            ret += num;
+        }
+        return ret;
+    }
 
-                    int b1_3 = c[0][2]-a3;
-                    int b2_3 = c[1][2]-a3;
-                    int b3_3 = c[2][2]-a3;
+    static class Permutations {
+        private int[] perm;
+        private boolean[] used;
+        private int N;
+        ArrayList<int[]> perms = new ArrayList<>();
 
-                    if (b1_1==b1_2 && b1_1 == b1_3 &&
-                            b2_1==b2_2 && b2_1 == b2_3 &&
-                            b3_1==b3_2 && b3_1 == b3_3) {
-                        System.out.println("Yes");
-                        return;
-                    }
-
-
+        public Permutations(int n) {
+            this.N=n;
+            used=new boolean[N];
+            perm=new int[N];
+            perm(0);
+        }
+        private void perm(int depth) {
+            if (depth == N) {
+                int[] idxArr = new int[N];
+                for (int i = 0; i < N; i++) {
+                    idxArr[i] = perm[i];
                 }
+                perms.add(idxArr);
+                return;
+            }
+            for (int i = 0; i < N; i++) {
+                if (used[i]) {
+                    continue;
+                }
+                used[i] = true;
+                perm[depth] = i;
+                perm(depth + 1);
+                used[i] = false;
             }
         }
-        System.out.println("No");
     }
 
     public static void main(final String[] args) {

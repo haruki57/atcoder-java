@@ -4,34 +4,33 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A1 {
+public class ABC273C {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        long T = scanner.nextInt();
-        int[] a = new int[N-1];
+        int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
-        int[][] xy = new int[M][2];
-        for (int i = 0; i < M; i++) {
-            xy[i][0]= scanner.nextInt();
-            xy[i][1]= scanner.nextInt();
-        }
-        int j = 0;
-        for (int i = 0; i < a.length; i++) {
-            if (j < xy.length && i+1==xy[j][0]) {
-                T+=xy[j][1];
-                j++;
+        Arrays.sort(a);
+        //System.out.println(Arrays.toString(a));
+        int count = 0;
+        int[] answers = new int[N+1];
+        for (int i = N-1; i >= 0; i--) {
+            int now = a[i];
+            int j = i-1;
+            while(j>=0&&a[j]==now) {
+                j--;
             }
-            T -= a[i];
-            if (T<= 0){
-                System.out.println("No");
-                return;
-            }
+            //System.out.println(now+" "+(i-j));
+            answers[count] = (i-j);
+            i=j+1;
+            count++;
         }
-        System.out.println("Yes");
+        for (int i = 0; i < N; i++) {
+            out.println(answers[i]+" ");
+        }
+        out.println();
     }
 
     public static void main(final String[] args) {
