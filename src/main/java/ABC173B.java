@@ -1,112 +1,27 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ABC363D_WA {
+public class ABC173B {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
-    static long N;
     static void run (final FastScanner scanner, final PrintWriter out) {
-        N = scanner.nextLong();
-        if (N==1) {
-            System.out.println(0);
-            return;
-        }
-        /*
-        if (N<=1000) {
-            long ansTLE = 0;
-            for (int i = 0; i < 10000000; i++) {
-                if(isKaibun(i)) {
-                    ansTLE++;
-                    if (ansTLE == N) {
-                        System.out.println(i);
-                        return;
-                    }
+        int N = scanner.nextInt();
+        String[] s = {"AC", "WA", "TLE", "RE"};
+        int[] cnt = new int[4];
+        for (int i = 0; i < N; i++) {
+            String code = scanner.next();
+            for (int j = 0; j < s.length; j++) {
+                if (s[j].equals(code)) {
+                    cnt[j]++;
                 }
             }
         }
-
-         */
-        N--;
-        long[] cnt = new long[70];
-        cnt[1]=9;
-        cnt[2]=9;
-        cnt[3]=10*9;
-
-        for (int i = 4; i < cnt.length; i++) {
-            int hoge = (i+3)/2-2;
-            cnt[i]=9 * (long)Math.pow(10, hoge);
+        for (int i = 0; i < s.length; i++) {
+            System.out.println(s[i]+" x "+cnt[i]);
         }
-        long sum = cnt[1]+cnt[2];
-
-        /*
-        Copied from editorial but cannot understand
-        for (int d = 1;d < 1000; d++) {
-            int x = (d + 1) / 2;
-            if (N <= 9 * TEN(x - 1)) {
-                char[] S = new char[d];
-                char[] ss = String.valueOf(TEN(x - 1) + N - 1).toCharArray();
-                Arrays.fill(S, ' ');
-                for (int i = 0; i < ss.length; i++) {
-                    S[i]=ss[i];
-                }
-                System.out.println(N+" "+x+" "+d);
-                System.out.println(S);
-                for (int i = x; i < d; i++) S[i] = S[d - 1 - i];
-                System.out.println(S);
-                return;
-            } else {
-                N -= 9 * TEN(x - 1);
-            }
-        }
-         */
-
-        System.out.println(Arrays.toString(cnt));
-        long[] cntTLE = new long[100];
-
-        long ansTLE = 0;
-        for (int i = 0; i < 100000000; i++) {
-            if(isKaibun(i)) {
-                cntTLE[String.valueOf(i).length()]++;
-                ansTLE++;
-                if (ansTLE == N) {
-                    System.out.println(i);
-                    return;
-                }
-            }
-        }
-        //System.out.println(Arrays.toString(cntTLE));
-    }
-
-    static long TEN(int x) {
-        return x == 0 ? 1 : TEN(x - 1) * 10;
-    }
-
-
-    private static String rec(int digit, long[] cnt, long cur) {
-        for (int i = 0; i < 10; i++) {
-            if (cur + cnt[digit] > N) {
-                return rec(digit-1, cnt, cur);
-            }
-            if (cur + cnt[digit] == N) {
-                return "Yes";
-            }
-        }
-
-        return "";
-    }
-
-    static boolean isKaibun(long a) {
-        String s = ""+a;
-        for (int i = 0; i <= s.length()/2; i++) {
-            if (s.charAt(i) != s.charAt(s.length()-i-1)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static void main(final String[] args) {
