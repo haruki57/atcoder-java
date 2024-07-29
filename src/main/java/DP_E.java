@@ -4,88 +4,43 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ABC364E {
+public class DP_E {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
+    static long lINF = Long.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        long X = scanner.nextLong();
-        long Y = scanner.nextLong();
-        int MAX_X=10000;
-        int MAX_Y=10000;
-        int[][] xy = new int[N][2];
+        int W = scanner.nextInt();
+        int[][] wv = new int[N][2];
         for (int i = 0; i < N; i++) {
-            xy[i][0]= scanner.nextInt();
-            xy[i][1]= scanner.nextInt();
+            wv[i][0]= scanner.nextInt();
+            wv[i][1]= scanner.nextInt();
         }
-        long[][][] dp = new long[N+1][10009][N+1];
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                Arrays.fill(dp[i][j],INF);
-            }
-        }
-        dp[0][0][0]=0;
-
+        int V = 110000;
+        var dp = new long[N+1][V+1];
+        Arrays.fill(dp[0], lINF);
+        dp[0][0]=0;
         for (int i = 1; i < dp.length; i++) {
             for (int j = 0; j < dp[i].length; j++) {
-                for (int k = 0; k <= i; k++) {
-                    dp[i][j][k]=dp[i-1][j][k];
-                    int jj = j - xy[i-1][0];
-                    if (jj >= 0 && k-1>=0) {
-                        dp[i][j][k]=Math.min(dp[i][j][k], dp[i-1][jj][k-1]+xy[i-1][1]);
-                    }
+                dp[i][j]=dp[i-1][j];
+                int jj = j - wv[i-1][1];
+                if(jj >= 0) {
+                    dp[i][j]=Math.min(dp[i][j], dp[i-1][jj]+wv[i-1][0]);
                 }
             }
         }
-        int ans = 0;
-        for (int i = 1; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                for (int k = 0; k <= i; k++) {
-                    if(j <= X && dp[i][j][k]<=Y) {
-                        ans = Math.max(ans, k);
-                    }
-                }
-            }
-        }
-        System.out.println(Math.min(ans+1, N));
-    }
 
-
-    // Atcoder上ではREとなる
-    private static void mle(int N, int X, int Y, int[][] xy) {
-        long[][][] dp = new long[N][X+1][Y+1];
-        for (int i = xy[0][0]; i < dp[0].length; i++) {
-            for (int j = xy[0][1]; j < dp[0][i].length; j++) {
-                dp[0][i][j]=1;
-            }
-        }
         long ans = 0;
-        for (int i = 1; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                for (int k = 0; k < dp[i][j].length; k++) {
-                    dp[i][j][k]=dp[i-1][j][k];
-                    int jj = j- xy[i][0];
-                    int kk = k- xy[i][1];
-                    if(jj>=0&&kk>=0) {
-                        dp[i][j][k]=Math.max(dp[i][j][k], dp[i-1][jj][kk]+1);
-                    }
-                    ans=Math.max(ans, dp[i][j][k]);
-                }
+        for (int i = 0; i < dp[dp.length-1].length; i++) {
+            if(dp[dp.length-1][i]<=W) {
+                ans= Math.max(ans, i);
             }
         }
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                for (int k = 0; k < dp[i][j].length; k++) {
-                    //System.out.print(dp[i][j][k]+" ");
-                }
-                //System.out.println();
-            }
-            //System.out.println();
+        for (int i = 0; i < dp.length; i++) {
+            //System.out.println(Arrays.toString(dp[i]));
         }
-
-        System.out.println(Math.min(ans+1, N));
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {

@@ -13,9 +13,25 @@ public class ABC364D {
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
         int Q = scanner.nextInt();
-        int[] a = new int[N];
+        long[] a = new long[N];
         Arrays.setAll(a, i -> scanner.nextInt());
         Arrays.sort(a);
+        for (int i = 0; i < Q; i++) {
+            long b = scanner.nextLong();
+            long k = scanner.nextLong();
+            long ok = INF, ng = -1;
+            while(Math.abs(ok-ng)>1) {
+                long mid = (ok+ng)/2;
+                if(ok(a,b,k,mid)) {
+                    ok = mid;
+                } else {
+                    ng = mid;
+                }
+            }
+            out.println(ok);
+        }
+
+        /*
         long[][] bk = new long[Q][4]; // b, k, originalIdx, ans
         for (int i = 0; i < bk.length; i++) {
             bk[i][0]= scanner.nextLong();
@@ -46,7 +62,50 @@ public class ABC364D {
         for (int i = 0; i < bk.length; i++) {
             out.println(bk[i][3]);
         }
+
+         */
     }
+
+    private static boolean ok(long[] a, long b, long k, long mid) {
+        long l = b-mid;
+        long h = b+mid;
+        int lb = lowerBound(a, l);
+        int ub = upperBound(a, h);
+        //System.out.println(b+" "+k+" "+mid+" "+lb+" "+ub);
+        return ub-lb>=k;
+    }
+
+
+    // Verified https://atcoder.jp/contests/tessoku-book/submissions/52257983
+    static int lowerBound(long[] A, long x) {
+        int l = -1, r = A.length;
+        while(Math.abs(r - l) > 1) {
+            int mid = (l + r) / 2;
+            if(A[mid] >= x) {
+                r = mid;
+            }
+            else {
+                l = mid;
+            }
+        }
+        return r;
+    }
+
+    // Verified https://atcoder.jp/contests/abc331/submissions/56089805
+    static int upperBound(long[] A, long x) {
+        int l = -1, r = A.length;
+        while(Math.abs(r - l) > 1) {
+            int mid = (l + r) / 2;
+            if(A[mid] > x) {
+                r = mid;
+            }
+            else {
+                l = mid;
+            }
+        }
+        return r;
+    }
+
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
