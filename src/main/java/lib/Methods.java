@@ -29,6 +29,21 @@ public class Methods {
     return r;
   }
 
+  // Verified https://atcoder.jp/contests/abc331/submissions/56089805
+  static int upperBound(int[] A, int x) {
+    int l = -1, r = A.length;
+    while(Math.abs(r - l) > 1) {
+      int mid = (l + r) / 2;
+      if(A[mid] > x) {
+        r = mid;
+      }
+      else {
+        l = mid;
+      }
+    }
+    return r;
+  }
+
   static class Permutations {
     private int[] perm;
     private boolean[] used;
