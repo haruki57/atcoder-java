@@ -1,123 +1,40 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ARC053B {
+public class ALPC_C {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        char[] s = scanner.next().toCharArray();
-        int[] cnts = new int[26];
-        for (char c : s) {
-            cnts[c-'a']++;
+        int T = scanner.nextInt();;
+        while(T-->0) {
+            int N = scanner.nextInt();
+            int M = scanner.nextInt();
+            int A = scanner.nextInt();
+            int B = scanner.nextInt();
+            out.println(floorSum(N, A, B, M));
         }
-
-        int k = 0;
-        for (int cnt : cnts) {
-            if (cnt%2==1) {
-                k++;
-            }
-        }
-        int N =s.length;
-        if (k<=1) {
-            System.out.println(N);
-            return;
-        }
-        System.out.println(2*((N-k)/(2*k))+1);
-
-        /*
-        int ok = 1, ng = s.length+1;
-        if (makePalin(cnts.clone(), s.length)) {
-            System.out.println(s.length);
-            return;
-        }
-
-        while(Math.abs(ok-ng) >1) {
-            int mid = (ok+ng)/2;
-            if (ok(cnts.clone(), mid)) {
-                ok = mid;
-            } else{
-                ng = mid;
-            }
-        }
-        System.out.println(ok);
-
-         */
     }
 
-
-    // Wrong idea
-    private static boolean ok(int[] cnts, int mid) {
-        int sum = 0;
-        for (int i = 0; i < cnts.length; i++) {
-            sum+=cnts[i];
+    static long floorSum(long n, long a, long b, long m) {
+        if (n == 0) return 0;
+        long res = 0;
+        if (a >= m) {
+            res += n * (n - 1) * (a / m) / 2;
+            a %= m;
         }
-        //System.out.println(mid);
-        //System.out.println(Arrays.toString(cnts));
-        if(!makePalin(cnts, mid)) {
-            return false;
+        if (b >= m) {
+            res += n * (b / m);
+            b %= m;
         }
-        //System.out.println(Arrays.toString(cnts));
-        sum-=mid;
-        if (sum < mid) {
-            return false;
-        }
-        return makePalin(cnts, sum);
-        /*
-        while(true) {
-            if (sum-mid < mid) {
-                if(!makePalin(cnts, sum)) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-            if(!makePalin(cnts, mid)) {
-                return false;
-            }
-            sum -= mid;
-        }
-
-         */
-    }
-
-    static private boolean makePalin(int[] cnts, int len) {
-        if (len%2==0) {
-            for (int i = 0; i < cnts.length; i++) {
-                while(len > 0 && cnts[i]>=2) {
-                    cnts[i]-=2;
-                    len-=2;
-                }
-            }
-            return len==0;
-        }
-        for (int i = 0; i < cnts.length; i++) {
-            while(len > 1 && cnts[i]>=2) {
-                cnts[i]-=2;
-                len-=2;
-            }
-        }
-        if (len!=1) {
-            return false;
-        }
-        // use character from odd num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]%2==1&&cnts[i]>=1) {
-                cnts[i]--;
-                return true;
-            }
-        }
-        // use character from even num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]>=1) {
-                cnts[i]--;
-                return true;
-            }
-        }
-        return false;
+        if (a == 0) return res;
+        long ymax = (a * n + b) / m, xmax = ymax * m - b;
+        if (ymax == 0) return res;
+        res += (n - (xmax + a - 1) / a) * ymax;
+        res += floorSum(ymax, m, (a - xmax % a) % a, a);
+        return res;
     }
 
     public static void main(final String[] args) {
@@ -131,6 +48,7 @@ public class ARC053B {
             out.flush();
         }
     }
+
 
     static class FastScanner {
         private final InputStream in = System.in;

@@ -4,121 +4,69 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ARC053B {
+public class ALPC_B {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        char[] s = scanner.next().toCharArray();
-        int[] cnts = new int[26];
-        for (char c : s) {
-            cnts[c-'a']++;
+        int N = scanner.nextInt();
+        int Q = scanner.nextInt();
+        var bit = new BinaryIndexedTree(new long[N+9]);
+        for (int i = 0; i < N; i++) {
+            bit.add(i+1, scanner.nextInt());
         }
-
-        int k = 0;
-        for (int cnt : cnts) {
-            if (cnt%2==1) {
-                k++;
+        while(Q-->0) {
+            int t = scanner.nextInt();
+            if(t==0) {
+                int p = scanner.nextInt();
+                int x = scanner.nextInt();
+                bit.add(p+1, x);
+            } else {
+                int l = scanner.nextInt()+1;
+                int r = scanner.nextInt()+1;
+                out.println(bit.sum(l, r-1));
             }
         }
-        int N =s.length;
-        if (k<=1) {
-            System.out.println(N);
-            return;
-        }
-        System.out.println(2*((N-k)/(2*k))+1);
-
-        /*
-        int ok = 1, ng = s.length+1;
-        if (makePalin(cnts.clone(), s.length)) {
-            System.out.println(s.length);
-            return;
-        }
-
-        while(Math.abs(ok-ng) >1) {
-            int mid = (ok+ng)/2;
-            if (ok(cnts.clone(), mid)) {
-                ok = mid;
-            } else{
-                ng = mid;
-            }
-        }
-        System.out.println(ok);
-
-         */
     }
 
+    // 1-indexed
+    static class BinaryIndexedTree {
+        long[] data;
+        long[] tree;
+        int N;
 
-    // Wrong idea
-    private static boolean ok(int[] cnts, int mid) {
-        int sum = 0;
-        for (int i = 0; i < cnts.length; i++) {
-            sum+=cnts[i];
-        }
-        //System.out.println(mid);
-        //System.out.println(Arrays.toString(cnts));
-        if(!makePalin(cnts, mid)) {
-            return false;
-        }
-        //System.out.println(Arrays.toString(cnts));
-        sum-=mid;
-        if (sum < mid) {
-            return false;
-        }
-        return makePalin(cnts, sum);
-        /*
-        while(true) {
-            if (sum-mid < mid) {
-                if(!makePalin(cnts, sum)) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-            if(!makePalin(cnts, mid)) {
-                return false;
-            }
-            sum -= mid;
+        BinaryIndexedTree(long[] data) {
+            this.data = data;
+            this.N = data.length;
+            this.tree = new long[N + 1]; // index range is from 1 to N
+            buildTree();
         }
 
-         */
+        void buildTree() {
+            for (int i = 0; i < N; i++) {
+                add(i + 1, data[i]);
+            }
+        }
+
+        void add(int index, long value) {
+            for (int i = index; i <= N; i += i & -i) {
+                tree[i] += value;
+            }
+        }
+
+        long sum(int from, int to) {
+            return sum(to) - sum(from - 1);
+        }
+
+        long sum(int index) {
+            long sum = 0;
+            for (int i = index; i > 0; i -= i & -i) {
+                sum += tree[i];
+            }
+            return sum;
+        }
     }
 
-    static private boolean makePalin(int[] cnts, int len) {
-        if (len%2==0) {
-            for (int i = 0; i < cnts.length; i++) {
-                while(len > 0 && cnts[i]>=2) {
-                    cnts[i]-=2;
-                    len-=2;
-                }
-            }
-            return len==0;
-        }
-        for (int i = 0; i < cnts.length; i++) {
-            while(len > 1 && cnts[i]>=2) {
-                cnts[i]-=2;
-                len-=2;
-            }
-        }
-        if (len!=1) {
-            return false;
-        }
-        // use character from odd num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]%2==1&&cnts[i]>=1) {
-                cnts[i]--;
-                return true;
-            }
-        }
-        // use character from even num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]>=1) {
-                cnts[i]--;
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
@@ -131,6 +79,7 @@ public class ARC053B {
             out.flush();
         }
     }
+
 
     static class FastScanner {
         private final InputStream in = System.in;

@@ -1,125 +1,97 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class ARC053B {
+public class ALPC_G {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        char[] s = scanner.next().toCharArray();
-        int[] cnts = new int[26];
-        for (char c : s) {
-            cnts[c-'a']++;
+        int N = scanner.nextInt();;
+        int M = scanner.nextInt();;
+        var scc = new StronglyConnectedComponents(N);
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt();
+            int b = scanner.nextInt();
+            scc.addEdge(a, b);
         }
-
-        int k = 0;
-        for (int cnt : cnts) {
-            if (cnt%2==1) {
-                k++;
+        List<List<Integer>> stronglyConnectedComponents = scc.getStronglyConnectedComponents();
+        System.out.println(stronglyConnectedComponents.size());
+        for (List<Integer> stronglyConnectedComponent : stronglyConnectedComponents) {
+            System.out.print(stronglyConnectedComponent.size());
+            for (Integer i : stronglyConnectedComponent) {
+                System.out.print(" "+i);
             }
+            System.out.println();
         }
-        int N =s.length;
-        if (k<=1) {
-            System.out.println(N);
-            return;
-        }
-        System.out.println(2*((N-k)/(2*k))+1);
-
-        /*
-        int ok = 1, ng = s.length+1;
-        if (makePalin(cnts.clone(), s.length)) {
-            System.out.println(s.length);
-            return;
-        }
-
-        while(Math.abs(ok-ng) >1) {
-            int mid = (ok+ng)/2;
-            if (ok(cnts.clone(), mid)) {
-                ok = mid;
-            } else{
-                ng = mid;
-            }
-        }
-        System.out.println(ok);
-
-         */
     }
 
 
-    // Wrong idea
-    private static boolean ok(int[] cnts, int mid) {
-        int sum = 0;
-        for (int i = 0; i < cnts.length; i++) {
-            sum+=cnts[i];
+    static class StronglyConnectedComponents {
+        private int N;
+        private List<List<Integer>> graph;
+        private List<List<Integer>> reverseGraph;
+        private boolean[] visited;
+        private Stack<Integer> stack;
+
+        public StronglyConnectedComponents(int n) {
+            N = n;
+            graph = new ArrayList<>();
+            reverseGraph = new ArrayList<>();
+            visited = new boolean[N];
+            stack = new Stack<>();
+            for (int i = 0; i < N; i++) {
+                graph.add(new ArrayList<>());
+                reverseGraph.add(new ArrayList<>());
+            }
         }
-        //System.out.println(mid);
-        //System.out.println(Arrays.toString(cnts));
-        if(!makePalin(cnts, mid)) {
-            return false;
+
+        public void addEdge(int from, int to) {
+            graph.get(from).add(to);
+            reverseGraph.get(to).add(from);
         }
-        //System.out.println(Arrays.toString(cnts));
-        sum-=mid;
-        if (sum < mid) {
-            return false;
-        }
-        return makePalin(cnts, sum);
-        /*
-        while(true) {
-            if (sum-mid < mid) {
-                if(!makePalin(cnts, sum)) {
-                    return false;
-                } else {
-                    return true;
+
+        public List<List<Integer>> getStronglyConnectedComponents() {
+            for (int i = 0; i < N; i++) {
+                if (!visited[i]) {
+                    dfs1(i);
                 }
             }
-            if(!makePalin(cnts, mid)) {
-                return false;
-            }
-            sum -= mid;
-        }
 
-         */
-    }
-
-    static private boolean makePalin(int[] cnts, int len) {
-        if (len%2==0) {
-            for (int i = 0; i < cnts.length; i++) {
-                while(len > 0 && cnts[i]>=2) {
-                    cnts[i]-=2;
-                    len-=2;
+            Arrays.fill(visited, false);
+            List<List<Integer>> sccs = new ArrayList<>();
+            while (!stack.isEmpty()) {
+                int v = stack.pop();
+                if (!visited[v]) {
+                    List<Integer> scc = new ArrayList<>();
+                    dfs2(v, scc);
+                    sccs.add(scc);
                 }
             }
-            return len==0;
+            return sccs;
         }
-        for (int i = 0; i < cnts.length; i++) {
-            while(len > 1 && cnts[i]>=2) {
-                cnts[i]-=2;
-                len-=2;
-            }
-        }
-        if (len!=1) {
-            return false;
-        }
-        // use character from odd num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]%2==1&&cnts[i]>=1) {
-                cnts[i]--;
-                return true;
-            }
-        }
-        // use character from even num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]>=1) {
-                cnts[i]--;
-                return true;
-            }
-        }
-        return false;
-    }
 
+        private void dfs1(int v) {
+            visited[v] = true;
+            for (int u : graph.get(v)) {
+                if (!visited[u]) {
+                    dfs1(u);
+                }
+            }
+            stack.push(v);
+        }
+
+        private void dfs2(int v, List<Integer> scc) {
+            visited[v] = true;
+            scc.add(v);
+            for (int u : reverseGraph.get(v)) {
+                if (!visited[u]) {
+                    dfs2(u, scc);
+                }
+            }
+        }
+    }
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
@@ -131,6 +103,7 @@ public class ARC053B {
             out.flush();
         }
     }
+
 
     static class FastScanner {
         private final InputStream in = System.in;

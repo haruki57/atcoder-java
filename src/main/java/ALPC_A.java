@@ -4,120 +4,72 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ARC053B {
+public class ALPC_A {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        char[] s = scanner.next().toCharArray();
-        int[] cnts = new int[26];
-        for (char c : s) {
-            cnts[c-'a']++;
-        }
-
-        int k = 0;
-        for (int cnt : cnts) {
-            if (cnt%2==1) {
-                k++;
-            }
-        }
-        int N =s.length;
-        if (k<=1) {
-            System.out.println(N);
-            return;
-        }
-        System.out.println(2*((N-k)/(2*k))+1);
-
-        /*
-        int ok = 1, ng = s.length+1;
-        if (makePalin(cnts.clone(), s.length)) {
-            System.out.println(s.length);
-            return;
-        }
-
-        while(Math.abs(ok-ng) >1) {
-            int mid = (ok+ng)/2;
-            if (ok(cnts.clone(), mid)) {
-                ok = mid;
-            } else{
-                ng = mid;
-            }
-        }
-        System.out.println(ok);
-
-         */
-    }
-
-
-    // Wrong idea
-    private static boolean ok(int[] cnts, int mid) {
-        int sum = 0;
-        for (int i = 0; i < cnts.length; i++) {
-            sum+=cnts[i];
-        }
-        //System.out.println(mid);
-        //System.out.println(Arrays.toString(cnts));
-        if(!makePalin(cnts, mid)) {
-            return false;
-        }
-        //System.out.println(Arrays.toString(cnts));
-        sum-=mid;
-        if (sum < mid) {
-            return false;
-        }
-        return makePalin(cnts, sum);
-        /*
-        while(true) {
-            if (sum-mid < mid) {
-                if(!makePalin(cnts, sum)) {
-                    return false;
+        int N = scanner.nextInt();
+        int Q = scanner.nextInt();
+        var uf = new UnionFind(N+1);
+        while(Q-->0) {
+            int t = scanner.nextInt();
+            int u = scanner.nextInt();
+            int v = scanner.nextInt();
+            if(t==0) {
+                uf.unite(u, v);
+            } else {
+                if(uf.same(u, v)) {
+                    out.println(1);
                 } else {
-                    return true;
+                    out.println(0);
                 }
             }
-            if(!makePalin(cnts, mid)) {
-                return false;
-            }
-            sum -= mid;
-        }
 
-         */
+        }
     }
 
-    static private boolean makePalin(int[] cnts, int len) {
-        if (len%2==0) {
-            for (int i = 0; i < cnts.length; i++) {
-                while(len > 0 && cnts[i]>=2) {
-                    cnts[i]-=2;
-                    len-=2;
+
+    static class UnionFind {
+        int[] par;
+        int[] size;
+
+        public UnionFind(int n) {
+            par = new int[n + 1];
+            size = new int[n + 1];
+            Arrays.fill(par, -1);
+            Arrays.fill(size, 1);
+        }
+
+        int root(int x){
+            while(true) {
+                if(par[x] == -1) {
+                    break;
                 }
+                x = par[x];
             }
-            return len==0;
+            return x;
         }
-        for (int i = 0; i < cnts.length; i++) {
-            while(len > 1 && cnts[i]>=2) {
-                cnts[i]-=2;
-                len-=2;
+
+        void unite(int u, int v) {
+            int rootU = root(u);
+            int rootV = root(v);
+            if(rootU == rootV) {
+                return;
             }
-        }
-        if (len!=1) {
-            return false;
-        }
-        // use character from odd num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]%2==1&&cnts[i]>=1) {
-                cnts[i]--;
-                return true;
+            if(size[rootU] < size[rootV]) {
+                par[rootU] = rootV;
+                size[rootV] += size[rootU];
             }
-        }
-        // use character from even num
-        for (int i = 0; i < cnts.length; i++) {
-            if(cnts[i]>=1) {
-                cnts[i]--;
-                return true;
+            else {
+                par[rootV] = rootU;
+                size[rootU] += size[rootV];
             }
         }
-        return false;
+
+        boolean same(int u, int v) {
+            return root(u) == root(v);
+        }
     }
 
     public static void main(final String[] args) {
