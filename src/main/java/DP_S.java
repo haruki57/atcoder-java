@@ -2,33 +2,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
-public class DP_L {
-    static int MOD = 998244353;
-    static int INF = Integer.MAX_VALUE/2;
+public class DP_S {
+    static int MOD = (int)1e9+7;
+    static long lINF = Long.MAX_VALUE/2;
 
-    static int[] a;
-    static long[][] dp;
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        a = new int[N];
-        dp = new long[N+1][N+1];
-        for (int i = 0; i < dp.length; i++) {
-            Arrays.fill(dp[i], -INF);
-        }
-        Arrays.setAll(a, i -> scanner.nextInt());
-        System.out.println(rec(0, N));
-    }
-
-    static long rec(int l,int r) {
-        if (dp[l][r]!=-INF) {
-            return dp[l][r];
-        }
-        if (l==r) {
-            return 0;
-        }
-        return dp[l][r]=Math.max(-rec(l+1, r)+a[l],-rec(l, r-1)+a[r-1]);
+        char[] k = scanner.next().toCharArray();
+        int D = scanner.nextInt();
+        long[][] dp = new long[k.length+1][D+1];
     }
 
     public static void main(final String[] args) {

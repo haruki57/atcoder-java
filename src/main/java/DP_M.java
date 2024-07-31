@@ -4,31 +4,32 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class DP_L {
-    static int MOD = 998244353;
+public class DP_M {
+    static int MOD = (int)Math.pow(10, 9)+ 7;
     static int INF = Integer.MAX_VALUE/2;
 
     static int[] a;
     static long[][] dp;
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
+        int K = scanner.nextInt();
         a = new int[N];
-        dp = new long[N+1][N+1];
-        for (int i = 0; i < dp.length; i++) {
-            Arrays.fill(dp[i], -INF);
-        }
         Arrays.setAll(a, i -> scanner.nextInt());
-        System.out.println(rec(0, N));
-    }
-
-    static long rec(int l,int r) {
-        if (dp[l][r]!=-INF) {
-            return dp[l][r];
+        long[][] dp = new long[N+1][K+1];
+        dp[0][0]=1;
+        long[] sum = new long[K+2];
+        //Arrays.fill(dp[1], 1);
+        for (int i = 0; i < dp.length-1; i++) {
+            Arrays.fill(sum, 0);
+            for (int j = 0; j < sum.length - 1; j++) {
+                sum[j+1]=sum[j]+dp[i][j];
+                sum[j+1]%=MOD;
+            }
+            for (int j = 0; j < dp[i].length; j++) {
+                dp[i+1][j]=(sum[j+1]-sum[Math.max(j-a[i], 0)]+MOD)%MOD;
+            }
         }
-        if (l==r) {
-            return 0;
-        }
-        return dp[l][r]=Math.max(-rec(l+1, r)+a[l],-rec(l, r-1)+a[r-1]);
+        System.out.println(dp[N][K]);
     }
 
     public static void main(final String[] args) {

@@ -1,34 +1,49 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class DP_L {
-    static int MOD = 998244353;
-    static int INF = Integer.MAX_VALUE/2;
+public class DP_P {
+    static int MOD = (int)1e9+7;
+    static long lINF = Long.MAX_VALUE/2;
 
-    static int[] a;
     static long[][] dp;
+    static List<Integer>[] g;
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        a = new int[N];
-        dp = new long[N+1][N+1];
-        for (int i = 0; i < dp.length; i++) {
-            Arrays.fill(dp[i], -INF);
+        //int N = 100000;
+        g = new List[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i]=new ArrayList<>();
         }
-        Arrays.setAll(a, i -> scanner.nextInt());
-        System.out.println(rec(0, N));
+        for (int i = 0; i < N - 1; i++) {
+            int x = scanner.nextInt()-1;
+            int y = scanner.nextInt()-1;
+            //int x = i;
+            //int y = i+1;
+            g[x].add(y);
+            g[y].add(x);
+        }
+        dp = new long[N][2];
+        dfs(0, -1);
+        for (int i = 0; i < dp.length; i++) {
+            //System.out.println(Arrays.toString(dp[i]));
+        }
+        System.out.println((dp[0][0]+dp[0][1])%MOD);
     }
 
-    static long rec(int l,int r) {
-        if (dp[l][r]!=-INF) {
-            return dp[l][r];
+    static void dfs(int cur, int parent) {
+        dp[cur][0] = 1;
+        dp[cur][1] = 1;
+        for (int next : g[cur]) {
+            if (next != parent) {
+                dfs(next, cur);
+                dp[cur][0] *= dp[next][0] + dp[next][1]; // white
+                dp[cur][0] %= MOD;
+                dp[cur][1] *= dp[next][0]; // black
+                dp[cur][1] %= MOD;
+            }
         }
-        if (l==r) {
-            return 0;
-        }
-        return dp[l][r]=Math.max(-rec(l+1, r)+a[l],-rec(l, r-1)+a[r-1]);
     }
 
     public static void main(final String[] args) {

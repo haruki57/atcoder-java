@@ -4,31 +4,36 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class DP_L {
-    static int MOD = 998244353;
-    static int INF = Integer.MAX_VALUE/2;
+public class DP_O {
+    static int MOD = (int)Math.pow(10, 9)+ 7;
+    static long lINF = Long.MAX_VALUE/2;
 
-    static int[] a;
+    static int[][] a;
     static long[][] dp;
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        a = new int[N];
-        dp = new long[N+1][N+1];
-        for (int i = 0; i < dp.length; i++) {
-            Arrays.fill(dp[i], -INF);
+        a = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                a[i][j]= scanner.nextInt();
+            }
         }
-        Arrays.setAll(a, i -> scanner.nextInt());
-        System.out.println(rec(0, N));
-    }
+        long[] dp =new long[1<<N];
+        dp[0]=1;
+        for (int bit = 1; bit < dp.length; bit++) {
+            int curMan = Integer.bitCount(bit)-1;
+            for (int curWoman = 0; curWoman < N; curWoman++) {
 
-    static long rec(int l,int r) {
-        if (dp[l][r]!=-INF) {
-            return dp[l][r];
+                if ((bit >> curWoman)%2==0){
+                    continue;
+                }
+                if(a[curMan][curWoman]==1) {
+                    dp[bit]+=dp[bit-(1<<curWoman)];
+                    dp[bit]%=MOD;
+                }
+            }
         }
-        if (l==r) {
-            return 0;
-        }
-        return dp[l][r]=Math.max(-rec(l+1, r)+a[l],-rec(l, r-1)+a[r-1]);
+        System.out.println(dp[dp.length-1]);
     }
 
     public static void main(final String[] args) {
