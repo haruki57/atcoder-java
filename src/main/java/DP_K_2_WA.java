@@ -2,11 +2,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
-public class DP_K {
+public class DP_K_2_WA {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
@@ -15,57 +13,25 @@ public class DP_K {
         int K = scanner.nextInt();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
-        boolean[] win = new boolean[K+1];
-        for (int i = 1; i < win.length; i++) {
-            for (int j = 0; j < N; j++) {
-                int ii = i-a[j];
-                if (ii<0){
-                    continue;
-                }
-                win[i] |= !win[ii];
-            }
-            System.out.println(i+" "+win[i]);
-        }
-        if (win[K]) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
-        }
-
-        /*
-        stack over flow
-        if (rec(K, 1)==1) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
-        }
-         */
-
+        System.out.println(rec(K, a, 0));
     }
 
-    /*
-    private static int rec(int k,int turn) {
-        if (firstWin[k]>0) {
-            return firstWin[k];
+    private static boolean rec(int k, int[] a, int turn) {
+        if (k==0) {
+            return turn == 0;
         }
-        int nextT = turn == 1 ? 2 : 1;
-        boolean win = false;
+        boolean allWin = true;
         for (int i = 0; i < a.length; i++) {
-            if (k-a[i]>=0) {
-                int result = rec(k-a[i], nextT);
-                if (result==turn) {
-                    win = true;
-                }
+            int next = k-a[i];
+            if (next<0) {
+                continue;
+            }
+            if (!rec(next, a, 1-turn)) {
+                allWin =false;
             }
         }
-        if (win) {
-            return firstWin[k]=turn;
-        } else {
-            return firstWin[k]=nextT;
-        }
-
+        return allWin;
     }
-     */
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);

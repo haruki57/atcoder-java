@@ -1,71 +1,48 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
-public class DP_K {
-    static int MOD = 998244353;
+public class DP_G_2 {
+    static int MOD = (int)Math.pow(10, 9)+ 7;
     static int INF = Integer.MAX_VALUE/2;
+
+    static long[] dp;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int K = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        boolean[] win = new boolean[K+1];
-        for (int i = 1; i < win.length; i++) {
-            for (int j = 0; j < N; j++) {
-                int ii = i-a[j];
-                if (ii<0){
-                    continue;
-                }
-                win[i] |= !win[ii];
-            }
-            System.out.println(i+" "+win[i]);
+        int M = scanner.nextInt();
+        List<Integer>[]g = new List[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i]=new ArrayList<>();
         }
-        if (win[K]) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
+        dp = new long[N];
+        Arrays.fill(dp, -1);
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            g[a].add(b);
         }
-
-        /*
-        stack over flow
-        if (rec(K, 1)==1) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
+        long ans = 0;
+        for (int i = 0; i < N; i++) {
+            ans=Math.max(ans, rec(g, i));
         }
-         */
-
+        System.out.println(ans-1);
     }
 
-    /*
-    private static int rec(int k,int turn) {
-        if (firstWin[k]>0) {
-            return firstWin[k];
+    private static long rec(List<Integer>[] g, int cur) {
+        if (dp[cur]!=-1) {
+            return dp[cur];
         }
-        int nextT = turn == 1 ? 2 : 1;
-        boolean win = false;
-        for (int i = 0; i < a.length; i++) {
-            if (k-a[i]>=0) {
-                int result = rec(k-a[i], nextT);
-                if (result==turn) {
-                    win = true;
-                }
-            }
+        long ret = 0;
+        for (Integer next : g[cur]) {
+            ret = Math.max(ret, rec(g, next));
         }
-        if (win) {
-            return firstWin[k]=turn;
-        } else {
-            return firstWin[k]=nextT;
-        }
-
+        return dp[cur]=ret+1;
     }
-     */
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);

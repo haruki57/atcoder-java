@@ -4,33 +4,32 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class DP_K_2 {
-    static int MOD = 998244353;
+public class DP_D_3 {
+    static int MOD = (int)Math.pow(10, 9)+ 7;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int K = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        System.out.println(rec(K, a, 0));
-    }
-
-    private static boolean rec(int k, int[] a, int turn) {
-        if (k==0) {
-            return turn == 0;
+        int W = scanner.nextInt();
+        int[][] wv = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            wv[i][0]= scanner.nextInt();
+            wv[i][1]= scanner.nextInt();
         }
-        boolean allWin = true;
-        for (int i = 0; i < a.length; i++) {
-            int next = k-a[i];
-            if (next<0) {
-                continue;
-            }
-            if (!rec(next, a, 1-turn)) {
-                allWin =false;
+        long[][] dp = new long[N+1][W+1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 0; j <= W; j++) {
+                dp[i][j]=dp[i-1][j];
+                int jj = j-wv[i-1][0];
+                if (jj >= 0) {
+                    dp[i][j]=Math.max(dp[i][j], dp[i-1][jj]+wv[i-1][1]);
+                }
             }
         }
-        return allWin;
+        for (int i = 0; i < dp.length; i++) {
+            //System.out.println(Arrays.toString(dp[i]));
+        }
+        System.out.println(dp[N][W]);
     }
 
     public static void main(final String[] args) {

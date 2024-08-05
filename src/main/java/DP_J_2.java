@@ -1,71 +1,74 @@
+import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
-public class DP_K {
-    static int MOD = 998244353;
+public class DP_J_2 {
+    static int MOD = (int)Math.pow(10, 9)+ 7;
     static int INF = Integer.MAX_VALUE/2;
-
+    static int N;
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int K = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        boolean[] win = new boolean[K+1];
-        for (int i = 1; i < win.length; i++) {
-            for (int j = 0; j < N; j++) {
-                int ii = i-a[j];
-                if (ii<0){
-                    continue;
-                }
-                win[i] |= !win[ii];
+        N = scanner.nextInt();
+        int one = 0;
+        int two = 0;
+        int three = 0;
+        var dp = new double[301][301][301];
+        for (int i = 0; i < N; i++) {
+            int a =scanner.nextInt();
+            if (a==1) {
+                one++;
+            } else if (a==2) {
+                two++;
+            } else {
+                three++;
             }
-            System.out.println(i+" "+win[i]);
         }
-        if (win[K]) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
+        //dp[one][two][three] = 1;
+
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                Arrays.fill(dp[i][j], -1);
+            }
         }
+        System.out.println(rec(dp, one, two, three));
 
         /*
-        stack over flow
-        if (rec(K, 1)==1) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
+        for (int i = one; i >= 0; i--) {
+            for (int j = two; j >= 0; j--) {
+                for (int k = three; k >= 0; k--) {
+                    if (i-1>=0)
+                        dp[i-1][j][k]+=dp[i][j][k]/3;
+                    if(j-1>=0)
+                        dp[i][j-1][k]+=dp[i][j][k]/3;
+                    if(k-1>=0)
+                        dp[i][j][k-1]+=dp[i][j][k]/3;
+                }
+            }
         }
          */
 
     }
 
-    /*
-    private static int rec(int k,int turn) {
-        if (firstWin[k]>0) {
-            return firstWin[k];
+    private static double rec(double[][][] dp, int i, int j,int k) {
+        if(i+j+k==0) {
+            return 0;
         }
-        int nextT = turn == 1 ? 2 : 1;
-        boolean win = false;
-        for (int i = 0; i < a.length; i++) {
-            if (k-a[i]>=0) {
-                int result = rec(k-a[i], nextT);
-                if (result==turn) {
-                    win = true;
-                }
-            }
+        if(dp[i][j][k] >= 0) {
+            return dp[i][j][k];
         }
-        if (win) {
-            return firstWin[k]=turn;
-        } else {
-            return firstWin[k]=nextT;
-        }
-
+        double ret = 0;
+        if(i-1>=0)
+            ret += rec(dp, i-1, j, k) * i;
+        if(j-1>=0)
+            ret += rec(dp, i+1, j-1, k) * j;
+        if(k-1>=0)
+            ret += rec(dp, i, j+1, k-1) * k;
+        ret += N;
+        ret *= 1.0 / (i+j+k);
+        return dp[i][j][k]=ret;
     }
-     */
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);

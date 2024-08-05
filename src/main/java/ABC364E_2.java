@@ -2,70 +2,84 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
-public class DP_K {
+public class ABC364E_2 {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int K = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        boolean[] win = new boolean[K+1];
-        for (int i = 1; i < win.length; i++) {
-            for (int j = 0; j < N; j++) {
-                int ii = i-a[j];
-                if (ii<0){
-                    continue;
-                }
-                win[i] |= !win[ii];
-            }
-            System.out.println(i+" "+win[i]);
+        long X = scanner.nextLong();
+        long Y = scanner.nextLong();
+        int MAX_X=10000;
+        int MAX_Y=10000;
+        int[][] xy = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            xy[i][0]= scanner.nextInt();
+            xy[i][1]= scanner.nextInt();
         }
-        if (win[K]) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
+        long[][][] dp = new long[N+1][MAX_X+1][N+1];
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                Arrays.fill(dp[i][j], INF);
+            }
+        }
+        dp[0][0][0]=0;
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                for (int k = 0; k < dp[i][j].length; k++) {
+                    dp[i][j][k]=dp[i-1][j][k];
+                    int jj = j - xy[i-1][0];
+                    int kk = k - 1;
+                    if(jj>=0 && kk >= 0) {
+                        dp[i][j][k]=Math.min(dp[i][j][k], dp[i-1][jj][k-1]+xy[i-1][1]);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                //System.out.println(Arrays.toString(dp[i][j]));
+            }
+            //System.out.println();
         }
 
-        /*
-        stack over flow
-        if (rec(K, 1)==1) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
+        long ans = 0;
+        for (int i = 0; i < dp[N].length; i++) {
+            for (int j = 0; j < dp[N][i].length; j++) {
+                if(i <= X && dp[N][i][j] <= Y){
+                    ans = Math.max(ans, j);
+                }
+            }
         }
+        System.out.println(Math.min(ans+1, N));
+
+                /*
+        long[][][] dp = new long[N+1][MAX_X+1][MAX_Y+1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                int jj = j - xy[i-1][0];
+                for (int k = 0; k < dp[i][j].length; k++) {
+                    dp[i][j][k]=dp[i-1][j][k];
+                    int kk = k - xy[i-1][1];
+                    if (jj >= 0 && kk >= 0) {
+                        dp[i][j][k]=Math.max(dp[i][j][k], dp[i-1][jj][kk]+1);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                //System.out.println(Arrays.toString(dp[i][j]));
+
+            }
+            //System.out.println();
+        }
+        System.out.println(dp[N][(int)X][(int)Y]);
+
          */
-
     }
-
-    /*
-    private static int rec(int k,int turn) {
-        if (firstWin[k]>0) {
-            return firstWin[k];
-        }
-        int nextT = turn == 1 ? 2 : 1;
-        boolean win = false;
-        for (int i = 0; i < a.length; i++) {
-            if (k-a[i]>=0) {
-                int result = rec(k-a[i], nextT);
-                if (result==turn) {
-                    win = true;
-                }
-            }
-        }
-        if (win) {
-            return firstWin[k]=turn;
-        } else {
-            return firstWin[k]=nextT;
-        }
-
-    }
-     */
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);

@@ -2,70 +2,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
-public class DP_K {
-    static int MOD = 998244353;
+public class DP_B_2 {
+    static int MOD = (int)Math.pow(10, 9)+ 7;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
         int K = scanner.nextInt();
-        int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        boolean[] win = new boolean[K+1];
-        for (int i = 1; i < win.length; i++) {
-            for (int j = 0; j < N; j++) {
-                int ii = i-a[j];
-                if (ii<0){
-                    continue;
+        int[] h = new int[N];
+        Arrays.setAll(h, i -> scanner.nextInt());
+        long[] dp = new long[N];
+        Arrays.fill(dp, INF);
+        dp[0]=0;
+        dp[1]=Math.abs(h[1]-h[0]);
+        for (int i = 2; i < dp.length; i++) {
+            for (int j = 1; j <= K; j++) {
+                int ii = i-j;
+                if(ii<0) {
+                    break;
                 }
-                win[i] |= !win[ii];
-            }
-            System.out.println(i+" "+win[i]);
-        }
-        if (win[K]) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
-        }
-
-        /*
-        stack over flow
-        if (rec(K, 1)==1) {
-            System.out.println("First");
-        } else {
-            System.out.println("Second");
-        }
-         */
-
-    }
-
-    /*
-    private static int rec(int k,int turn) {
-        if (firstWin[k]>0) {
-            return firstWin[k];
-        }
-        int nextT = turn == 1 ? 2 : 1;
-        boolean win = false;
-        for (int i = 0; i < a.length; i++) {
-            if (k-a[i]>=0) {
-                int result = rec(k-a[i], nextT);
-                if (result==turn) {
-                    win = true;
-                }
+                dp[i]=Math.min(dp[i], dp[ii]+Math.abs(h[i]-h[ii]));
             }
         }
-        if (win) {
-            return firstWin[k]=turn;
-        } else {
-            return firstWin[k]=nextT;
-        }
-
+        //System.out.println(Arrays.toString(dp));
+        System.out.println(dp[dp.length-1]);
     }
-     */
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
