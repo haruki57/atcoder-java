@@ -3,103 +3,94 @@ package typical90;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class _082 {
-    static long MOD = (long)Math.pow(10, 9)+ 7;
+public class _021 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        long L = scanner.nextLong();
-        long R = scanner.nextLong();
-        int digitL = Long.toString(L).length();
-        int digitR = Long.toString(R).length();
-        if(digitL == digitR) {
-            System.out.println(wa(L, R,MOD) %MOD * digitL%MOD);
-            return;
+        int N = scanner.nextInt();
+        int M = scanner.nextInt();
+        var scc = new StronglyConnectedComponents(N);
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            scc.addEdge(a,b);
         }
-        long i = (long)Math.pow(10, digitL);
-        long ans = wa(L, i-1, MOD) * digitL;
-
-        ans %= MOD;
-
-        /*
-        System.out.println(L+" "+(i-1));
-        System.out.println(i);
+        List<List<Integer>> stronglyConnectedComponents = scc.getStronglyConnectedComponents();
+        long ans = 0;
+        for (List<Integer> stronglyConnectedComponent : stronglyConnectedComponents) {
+            //System.out.println(stronglyConnectedComponent);
+            long size = stronglyConnectedComponent.size();
+            ans += (size * (size-1))/2;
+        }
         System.out.println(ans);
-        System.out.println();
+    }
 
-         */
+    static class StronglyConnectedComponents {
+        private int N;
+        private List<List<Integer>> graph;
+        private List<List<Integer>> reverseGraph;
+        private boolean[] visited;
+        private Stack<Integer> stack;
 
-        for(; i <= R; i*=10) {
-            if (i==(long) Math.pow(10, 18)){
-                ans = ans + wa(i, i,MOD) * Long.toString(i).length();
-                ans %= MOD;
-                break;
+        public StronglyConnectedComponents(int n) {
+            N = n;
+            graph = new ArrayList<>();
+            reverseGraph = new ArrayList<>();
+            visited = new boolean[N];
+            stack = new Stack<>();
+            for (int i = 0; i < N; i++) {
+                graph.add(new ArrayList<>());
+                reverseGraph.add(new ArrayList<>());
             }
-            ans = ans + wa(i, (long)Math.min(i*10-1,R),MOD) * Long.toString(i).length();
-            ans %= MOD;
-            /*
-            System.out.println(i);
-            System.out.println(ans);
-            System.out.println();
-
-             */
         }
-        System.out.println(ans);
-        //System.out.println(ansTLE(L, R));
-    }
 
-    static long ansTLE(long a,long b) {
-        long ret = 0;
-        for (long i = a; i <= b; i++) {
-            ret += i%MOD*String.valueOf(i).length();
-            ret %= MOD;
+        public void addEdge(int from, int to) {
+            graph.get(from).add(to);
+            reverseGraph.get(to).add(from);
         }
-        return ret;
-    }
 
-    // https://atcoder.jp/contests/typical90/submissions/56480590
-    // https://www.try-it.jp/chapters-5324/sections-5325/lessons-5342/
-    // a + (a+1) + ... + (b-1) + b
-    static long wa2(long a,long b) {
-        long n = b-a+1;
-        return (2*a+(n-1))*n/2;
-    }
+        public List<List<Integer>> getStronglyConnectedComponents() {
+            for (int i = 0; i < N; i++) {
+                if (!visited[i]) {
+                    dfs1(i);
+                }
+            }
 
-    // (a + (a+1) + (a+2) + ... + (b-1) + b) % mod
-    static long wa(long a,long b, long mod) {
-        long n = b-a+1;
-        BigInteger A = BigInteger.valueOf(a%mod);
-        BigInteger N = BigInteger.valueOf(n%mod);
-        BigInteger MOD = BigInteger.valueOf(mod);
-        var hoge = A.multiply(BigInteger.TWO).add(N.add(BigInteger.valueOf(mod-1))).multiply(N).mod(MOD).longValue();
-        //return (2*a+(n-1))*n/2;
-        return hoge * modInv(2, mod)%mod;
-    }
-
-    static long modInv(long a, long mod) {
-        long x0 = 1;
-        long y0 = 0;
-        long x1 = 0;
-        long y1 = 1;
-        long b = mod;
-        while ( b != 0 ) {
-            long q = a / b;
-            long tmp = b;
-            b = a % b;
-            a = tmp;
-
-            tmp = x1;
-            x1 = x0 - q * x1;
-            x0 = tmp;
-
-            tmp = y1;
-            y1 = y0 - q * y1;
-            y0 = tmp;
+            Arrays.fill(visited, false);
+            List<List<Integer>> sccs = new ArrayList<>();
+            while (!stack.isEmpty()) {
+                int v = stack.pop();
+                if (!visited[v]) {
+                    List<Integer> scc = new ArrayList<>();
+                    dfs2(v, scc);
+                    sccs.add(scc);
+                }
+            }
+            return sccs;
         }
-        return (x0 + mod) % mod;
+
+        private void dfs1(int v) {
+            visited[v] = true;
+            for (int u : graph.get(v)) {
+                if (!visited[u]) {
+                    dfs1(u);
+                }
+            }
+            stack.push(v);
+        }
+
+        private void dfs2(int v, List<Integer> scc) {
+            visited[v] = true;
+            scc.add(v);
+            for (int u : reverseGraph.get(v)) {
+                if (!visited[u]) {
+                    dfs2(u, scc);
+                }
+            }
+        }
     }
 
     public static void main(final String[] args) {

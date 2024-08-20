@@ -3,104 +3,51 @@ package typical90;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class _082 {
-    static long MOD = (long)Math.pow(10, 9)+ 7;
+public class _039 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
+    static List<Integer>[]g;
+    static long[] num;
+    static long ans = 0;
     static void run (final FastScanner scanner, final PrintWriter out) {
-        long L = scanner.nextLong();
-        long R = scanner.nextLong();
-        int digitL = Long.toString(L).length();
-        int digitR = Long.toString(R).length();
-        if(digitL == digitR) {
-            System.out.println(wa(L, R,MOD) %MOD * digitL%MOD);
-            return;
+        int N = scanner.nextInt();
+        g=new List[N];
+        num=new long[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i]=new ArrayList<>();
         }
-        long i = (long)Math.pow(10, digitL);
-        long ans = wa(L, i-1, MOD) * digitL;
-
-        ans %= MOD;
-
-        /*
-        System.out.println(L+" "+(i-1));
-        System.out.println(i);
+        for (int i = 0; i < N - 1; i++) {
+            int u = scanner.nextInt()-1;
+            int v = scanner.nextInt()-1;
+            g[u].add(v);
+            g[v].add(u);
+        }
+        int root = 0;
+        rec(root, -1);
+        //System.out.println(Arrays.toString(num));
+        //System.out.println(Arrays.toString(depth));
         System.out.println(ans);
-        System.out.println();
+    }
 
-         */
-
-        for(; i <= R; i*=10) {
-            if (i==(long) Math.pow(10, 18)){
-                ans = ans + wa(i, i,MOD) * Long.toString(i).length();
-                ans %= MOD;
-                break;
+    private static long rec(int cur, int prev) {
+        long ret = 1;
+        for (Integer next : g[cur]) {
+            if(next==prev){
+                continue;
             }
-            ans = ans + wa(i, (long)Math.min(i*10-1,R),MOD) * Long.toString(i).length();
-            ans %= MOD;
-            /*
-            System.out.println(i);
-            System.out.println(ans);
-            System.out.println();
-
-             */
+            long size = rec(next, cur);
+            ans += size * (g.length-size);
+            ret += size;
         }
-        System.out.println(ans);
-        //System.out.println(ansTLE(L, R));
+        return num[cur]=ret;
     }
 
-    static long ansTLE(long a,long b) {
-        long ret = 0;
-        for (long i = a; i <= b; i++) {
-            ret += i%MOD*String.valueOf(i).length();
-            ret %= MOD;
-        }
-        return ret;
-    }
-
-    // https://atcoder.jp/contests/typical90/submissions/56480590
-    // https://www.try-it.jp/chapters-5324/sections-5325/lessons-5342/
-    // a + (a+1) + ... + (b-1) + b
-    static long wa2(long a,long b) {
-        long n = b-a+1;
-        return (2*a+(n-1))*n/2;
-    }
-
-    // (a + (a+1) + (a+2) + ... + (b-1) + b) % mod
-    static long wa(long a,long b, long mod) {
-        long n = b-a+1;
-        BigInteger A = BigInteger.valueOf(a%mod);
-        BigInteger N = BigInteger.valueOf(n%mod);
-        BigInteger MOD = BigInteger.valueOf(mod);
-        var hoge = A.multiply(BigInteger.TWO).add(N.add(BigInteger.valueOf(mod-1))).multiply(N).mod(MOD).longValue();
-        //return (2*a+(n-1))*n/2;
-        return hoge * modInv(2, mod)%mod;
-    }
-
-    static long modInv(long a, long mod) {
-        long x0 = 1;
-        long y0 = 0;
-        long x1 = 0;
-        long y1 = 1;
-        long b = mod;
-        while ( b != 0 ) {
-            long q = a / b;
-            long tmp = b;
-            b = a % b;
-            a = tmp;
-
-            tmp = x1;
-            x1 = x0 - q * x1;
-            x0 = tmp;
-
-            tmp = y1;
-            y1 = y0 - q * y1;
-            y0 = tmp;
-        }
-        return (x0 + mod) % mod;
-    }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);

@@ -3,103 +3,31 @@ package typical90;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _082 {
-    static long MOD = (long)Math.pow(10, 9)+ 7;
+public class _022_2 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        long L = scanner.nextLong();
-        long R = scanner.nextLong();
-        int digitL = Long.toString(L).length();
-        int digitR = Long.toString(R).length();
-        if(digitL == digitR) {
-            System.out.println(wa(L, R,MOD) %MOD * digitL%MOD);
-            return;
-        }
-        long i = (long)Math.pow(10, digitL);
-        long ans = wa(L, i-1, MOD) * digitL;
-
-        ans %= MOD;
-
-        /*
-        System.out.println(L+" "+(i-1));
-        System.out.println(i);
-        System.out.println(ans);
-        System.out.println();
-
-         */
-
-        for(; i <= R; i*=10) {
-            if (i==(long) Math.pow(10, 18)){
-                ans = ans + wa(i, i,MOD) * Long.toString(i).length();
-                ans %= MOD;
-                break;
-            }
-            ans = ans + wa(i, (long)Math.min(i*10-1,R),MOD) * Long.toString(i).length();
-            ans %= MOD;
-            /*
-            System.out.println(i);
-            System.out.println(ans);
-            System.out.println();
-
-             */
-        }
-        System.out.println(ans);
-        //System.out.println(ansTLE(L, R));
+        long A = scanner.nextLong();
+        long B = scanner.nextLong();
+        long C = scanner.nextLong();
+        long gcd = gcd(A, gcd(B,C));
+        System.out.println(A/gcd-1 + B/gcd-1 + C/gcd-1);
     }
 
-    static long ansTLE(long a,long b) {
-        long ret = 0;
-        for (long i = a; i <= b; i++) {
-            ret += i%MOD*String.valueOf(i).length();
-            ret %= MOD;
+    static long gcd(long a,long b) {
+        if(a<b) {
+            long tmp = a;
+            a = b;
+            b=tmp;
         }
-        return ret;
-    }
-
-    // https://atcoder.jp/contests/typical90/submissions/56480590
-    // https://www.try-it.jp/chapters-5324/sections-5325/lessons-5342/
-    // a + (a+1) + ... + (b-1) + b
-    static long wa2(long a,long b) {
-        long n = b-a+1;
-        return (2*a+(n-1))*n/2;
-    }
-
-    // (a + (a+1) + (a+2) + ... + (b-1) + b) % mod
-    static long wa(long a,long b, long mod) {
-        long n = b-a+1;
-        BigInteger A = BigInteger.valueOf(a%mod);
-        BigInteger N = BigInteger.valueOf(n%mod);
-        BigInteger MOD = BigInteger.valueOf(mod);
-        var hoge = A.multiply(BigInteger.TWO).add(N.add(BigInteger.valueOf(mod-1))).multiply(N).mod(MOD).longValue();
-        //return (2*a+(n-1))*n/2;
-        return hoge * modInv(2, mod)%mod;
-    }
-
-    static long modInv(long a, long mod) {
-        long x0 = 1;
-        long y0 = 0;
-        long x1 = 0;
-        long y1 = 1;
-        long b = mod;
-        while ( b != 0 ) {
-            long q = a / b;
-            long tmp = b;
-            b = a % b;
-            a = tmp;
-
-            tmp = x1;
-            x1 = x0 - q * x1;
-            x0 = tmp;
-
-            tmp = y1;
-            y1 = y0 - q * y1;
-            y0 = tmp;
+        if(b==0) {
+            return a;
         }
-        return (x0 + mod) % mod;
+        return gcd(b, a%b);
     }
 
     public static void main(final String[] args) {

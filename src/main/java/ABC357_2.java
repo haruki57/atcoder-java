@@ -3,53 +3,19 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class ABC367E_WA {
+public class ABC357_2 {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        long K = scanner.nextLong();
-        int[] x = new int[N];
-        Arrays.setAll(x, i -> scanner.nextInt()-1);
         int[] a = new int[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        if(K==0) {
-            for (int i = 0; i < a.length; i++) {
-                out.print(a[i]+" ");
-            }
-            out.println();
-            return;
-        }
-
-        Node[] nodes = functionalGraph(x);
-        for (Node node : nodes) {
-            //System.out.println(node);
-        }
-
-        for (int i = 0; i < nodes.length; i++) {
-            Node n = nodes[i];
-            if(n.pathToLoop==null) {
-                int idx = (int)((((long)n.idx + K)) % n.loop.size());
-                out.print(a[n.loop.get(idx)]+" ");
-            } else {
-                int distToLoop = n.idxToLoop;
-                if (distToLoop > K) {
-                    long size = n.pathToLoop.size();
-                    size -= distToLoop;
-                    size += K;
-                    int idx = n.pathToLoop.get((int)size);
-                    out.print(a[idx]+" ");
-                } else {
-                    long KK = K-distToLoop;
-                    long idx = ((long)n.idx + KK + n.loop.size()) % n.loop.size();
-                    out.print(a[n.loop.get((int)idx)]+" ");
-                }
-            }
-        }
+        Arrays.setAll(a, i -> scanner.nextInt()-1);
+        System.out.println(functionalGraph(a));
     }
 
-    private static Node[] functionalGraph(int[] x) {
+    static long functionalGraph(int[] x) {
+        long ret = 0;
         int N = x.length;
         int[] inCnt = new int[N];
         for (int i = 0; i < x.length; i++) {
@@ -62,7 +28,7 @@ public class ABC367E_WA {
             }
         }
         Set<Integer> visited = new HashSet<>();
-        Node[] nodes = new Node[N];
+        long[] memo = new long[N];
         for (Integer i : inZeros) {
             visited.add(i);
             Queue<Integer> q = new LinkedList<>();
@@ -92,15 +58,9 @@ public class ABC367E_WA {
             }
             if(loopStart==-1) {
                 // existing loop
-                var loop = nodes[lastVisited].loop;
-                int i0=0;
+                int i0=path.size();
                 for (Integer p : path) {
-                    Node n = new Node();
-                    nodes[p]=n;
-                    n.pathToLoop = path;
-                    n.idxToLoop = n.pathToLoop.size() - i0++;
-                    n.loop = loop;
-                    n.idx = nodes[lastVisited].idx;
+                    memo[p]=memo[lastVisited]+i0--;
                 }
             } else {
                 List<Integer> pathToLoop = new ArrayList<>();
@@ -114,25 +74,21 @@ public class ABC367E_WA {
                 for (int j = pathToLoop.size(); j < path.size(); j++) {
                     loop.add(path.get(j));
                 }
-                int i0 = 0;
-                for (Integer p : pathToLoop) {
-                    Node n = new Node();
-                    nodes[p]=n;
-                    n.pathToLoop = pathToLoop;
-                    n.idxToLoop = n.pathToLoop.size() - i0++;
-                    n.loop = loop;
-                    n.idx = 0;
-                }
-                i0=0;
+                long loopSize = loop.size();
                 for (Integer p : loop) {
-                    Node n = new Node();
-                    nodes[p]=n;
-                    n.loop = loop;
-                    n.idx = i0++;
+                    memo[p]= loopSize;
+                }
+                int i0 = pathToLoop.size();
+                for (Integer p : pathToLoop) {
+                    memo[p] = loopSize + i0--;
                 }
             }
         }
+        for (long l : memo) {
+            ret += l;
+        }
 
+        // 独立したループ
         for (int i = 0; i < N; i++) {
             if(visited.contains(i)) {
                 continue;
@@ -151,33 +107,10 @@ public class ABC367E_WA {
                 }
                 q.add(next);
             }
-            int i0 = 0;
-            for (Integer p : path) {
-                Node n = new Node();
-                nodes[p] = n;
-                n.idx = i0++;
-                n.loop = path;
-            }
-
+            long size = path.size();
+            ret += size * size;
         }
-        return nodes;
-    }
-
-    private static class Node {
-        int idx;
-        List<Integer> loop;
-        int idxToLoop;
-        List<Integer> pathToLoop;
-
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "idx=" + idx +
-                    ", loop=" + loop +
-                    ", idxToLoop=" + idxToLoop +
-                    ", pathToLoop=" + pathToLoop +
-                    '}';
-        }
+        return ret;
     }
 
     public static void main(final String[] args) {

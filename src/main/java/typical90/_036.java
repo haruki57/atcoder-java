@@ -3,103 +3,40 @@ package typical90;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class _082 {
-    static long MOD = (long)Math.pow(10, 9)+ 7;
-    static int INF = Integer.MAX_VALUE/2;
+public class _036 {
+    static int MOD = 998244353;
+    static long INF = Long.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        long L = scanner.nextLong();
-        long R = scanner.nextLong();
-        int digitL = Long.toString(L).length();
-        int digitR = Long.toString(R).length();
-        if(digitL == digitR) {
-            System.out.println(wa(L, R,MOD) %MOD * digitL%MOD);
-            return;
+        int N = scanner.nextInt();
+        int Q = scanner.nextInt();
+        long[][] a = new long[N][2];
+        long minX, minY, maxX, maxY;
+        minX=minY=INF;
+        maxX=maxY=-INF;
+        for (int i = 0; i < N; i++) {
+            long x = scanner.nextInt();
+            long y = scanner.nextInt();
+            a[i][0]= x-y;
+            a[i][1]= x+y;
+            minX = Math.min(minX, a[i][0]);
+            minY = Math.min(minY, a[i][1]);
+            maxX = Math.max(maxX, a[i][0]);
+            maxY = Math.max(maxY, a[i][1]);
         }
-        long i = (long)Math.pow(10, digitL);
-        long ans = wa(L, i-1, MOD) * digitL;
-
-        ans %= MOD;
-
-        /*
-        System.out.println(L+" "+(i-1));
-        System.out.println(i);
-        System.out.println(ans);
-        System.out.println();
-
-         */
-
-        for(; i <= R; i*=10) {
-            if (i==(long) Math.pow(10, 18)){
-                ans = ans + wa(i, i,MOD) * Long.toString(i).length();
-                ans %= MOD;
-                break;
-            }
-            ans = ans + wa(i, (long)Math.min(i*10-1,R),MOD) * Long.toString(i).length();
-            ans %= MOD;
-            /*
-            System.out.println(i);
-            System.out.println(ans);
-            System.out.println();
-
-             */
+        while(Q-->0) {
+            int q = scanner.nextInt()-1;
+            long x = a[q][0];
+            long y = a[q][1];
+            long xx = Math.max(Math.abs(x-maxX), Math.abs(x-minX));
+            long yy = Math.max(Math.abs(y-maxY), Math.abs(y-minY));
+            out.println(Math.max(xx, yy));
+            //System.out.println(xx+" "+yy);
+            //System.out.println(xx+yy);
         }
-        System.out.println(ans);
-        //System.out.println(ansTLE(L, R));
-    }
-
-    static long ansTLE(long a,long b) {
-        long ret = 0;
-        for (long i = a; i <= b; i++) {
-            ret += i%MOD*String.valueOf(i).length();
-            ret %= MOD;
-        }
-        return ret;
-    }
-
-    // https://atcoder.jp/contests/typical90/submissions/56480590
-    // https://www.try-it.jp/chapters-5324/sections-5325/lessons-5342/
-    // a + (a+1) + ... + (b-1) + b
-    static long wa2(long a,long b) {
-        long n = b-a+1;
-        return (2*a+(n-1))*n/2;
-    }
-
-    // (a + (a+1) + (a+2) + ... + (b-1) + b) % mod
-    static long wa(long a,long b, long mod) {
-        long n = b-a+1;
-        BigInteger A = BigInteger.valueOf(a%mod);
-        BigInteger N = BigInteger.valueOf(n%mod);
-        BigInteger MOD = BigInteger.valueOf(mod);
-        var hoge = A.multiply(BigInteger.TWO).add(N.add(BigInteger.valueOf(mod-1))).multiply(N).mod(MOD).longValue();
-        //return (2*a+(n-1))*n/2;
-        return hoge * modInv(2, mod)%mod;
-    }
-
-    static long modInv(long a, long mod) {
-        long x0 = 1;
-        long y0 = 0;
-        long x1 = 0;
-        long y1 = 1;
-        long b = mod;
-        while ( b != 0 ) {
-            long q = a / b;
-            long tmp = b;
-            b = a % b;
-            a = tmp;
-
-            tmp = x1;
-            x1 = x0 - q * x1;
-            x0 = tmp;
-
-            tmp = y1;
-            y1 = y0 - q * y1;
-            y0 = tmp;
-        }
-        return (x0 + mod) % mod;
     }
 
     public static void main(final String[] args) {
