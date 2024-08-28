@@ -3,29 +3,78 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class C08 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
+        int[][] in = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            in[i][0]= scanner.nextInt();
+            in[i][1]= scanner.nextInt();
+        }
+        List<String> possibleAnswers = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            boolean possible=true;
             for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+                if(i==in[j][0]&&in[j][1]>=2) {
+                    possible=false;
+                    break;
+                } else if(i==in[j][0]&&in[j][1]==1) {
+                    System.out.println(toS(i));
+                    return;
+                } else if(in[j][1]==2){
+                    String s = toS(i);
+                    String t = toS(in[j][0]);
+                    int diff=0;
+                    for (int k = 0; k < 4; k++) {
+                        if (s.charAt(k)!=t.charAt(k)) {
+                            diff++;
+                        }
+                    }
+                    if(diff!=1) {
+                        possible=false;
+                    }
+                }
+            }
+            if(possible) {
+                possibleAnswers.add(toS(i));
             }
         }
+        if(possibleAnswers.size() == 1) {
+            System.out.println(possibleAnswers.get(0));
+        } else {
+            System.out.println("Can't Solve");
+        }
+
+    }
+
+    static String toS(int num) {
+        var sb = new StringBuilder();
+        sb.append(num);
+        while(sb.length()<4) {
+            sb.insert(0, 0);
+        }
+        return sb.toString();
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

@@ -3,29 +3,73 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B64 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
         int M = scanner.nextInt();
-        int[][] a = new int[M][N];
+        List<int[]>[] g = new List[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i] = new ArrayList<>();
+        }
         for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            int c = scanner.nextInt();
+            g[a].add(new int[]{b, c});
+            g[b].add(new int[]{a, c});
+        }
+        PriorityQueue<int[]> q = new PriorityQueue<>((o1, o2) -> o1[0]-o2[0]);
+        q.add(new int[]{0, 0});
+        long[] shortest = new long[N];
+        Arrays.fill(shortest, Long.MAX_VALUE/2);
+        int[] prev = new int[N];
+        shortest[0]=0;
+        prev[0]=-1;
+        while(!q.isEmpty()) {
+            int[] polled = q.poll();
+            int dist = polled[0];
+            int cur = polled[1];
+            if(dist > shortest[cur]) {
+                continue;
+            }
+            for (int[] ints : g[cur]) {
+                int ndist = dist + ints[1];
+                int next = ints[0];
+                if(shortest[next] > ndist) {
+                    shortest[next] = ndist;
+                    q.add(new int[]{ndist, next});
+                    prev[next] = cur;
+                }
             }
         }
+        List<Integer> answers = new ArrayList<>();
+        int cur = N-1;
+        while(cur >= 0) {
+            answers.add(cur+1);
+            cur = prev[cur];
+
+        }
+        for (int i = 0; i < answers.size(); i++) {
+            out.print((answers.get(answers.size()-i-1))+" ");
+        }
+        out.println();
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

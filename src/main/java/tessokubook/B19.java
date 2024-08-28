@@ -6,26 +6,55 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B19 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        long W = scanner.nextInt();
+        long[] w = new long[N];
+        int[] v = new int[N];
+        for (int i = 0; i < N; i++) {
+            w[i]= scanner.nextInt();
+            v[i]= scanner.nextInt();
+        }
+        long[][] dp = new long[N+1][1000*N+9];
+        //long[][] dp = new long[N+1][100];
+        for (int i = 0; i < dp.length; i++) {
+            Arrays.fill(dp[i], Long.MAX_VALUE/4);
+        }
+        dp[0][0]=0;
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                dp[i][j]=Math.min(dp[i][j], dp[i-1][j]);
+                if(j-v[i-1]>=0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i - 1][j - v[i - 1]]+w[i-1]);
+                }
             }
         }
+        for (int i = 0; i < dp.length; i++) {
+            //System.out.println(Arrays.toString(dp[i]));
+        }
+        long ans = 0;
+        for (int i = 0; i < dp[0].length; i++) {
+            if(dp[N][i] <= W) {
+                ans = i;
+            }
+        }
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

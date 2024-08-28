@@ -3,29 +3,64 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B62 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
         int M = scanner.nextInt();
-        int[][] a = new int[M][N];
+        List<Integer>[] g = new List[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i] = new ArrayList<>();
+        }
         for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            g[a].add(b);
+            g[b].add(a);
+        }
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] visited = new boolean[N];
+        int[] prev = new int[N];
+        visited[0]=true;
+        prev[0]=-1;
+        q.add(0);
+        while(!q.isEmpty()) {
+            Integer cur = q.poll();
+            for (Integer next : g[cur]) {
+                if(visited[next]) {
+                    continue;
+                }
+                visited[next]=true;
+                q.add(next);
+                prev[next]=cur;
             }
+        }
+        List<Integer> answers = new ArrayList<>();
+        int cur = N-1;
+        while(cur!=-1) {
+            answers.add(cur);
+            cur = prev[cur];
+        }
+        for (int i = 0; i < answers.size(); i++) {
+            int ii = answers.size()-1-i;
+            out.print((answers.get(ii)+1)+" ");
         }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

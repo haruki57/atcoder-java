@@ -3,29 +3,67 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B14 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int K = scanner.nextInt();
+        int[] a = new int[N/2];
+        int[] b = new int[N-a.length];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        Arrays.setAll(b, i -> scanner.nextInt());
+        long[] x = new long[1<<a.length];
+        for (int bit = 0; bit < x.length; bit++) {
+            long sum = 0;
+            for (int i = 0; i < a.length; i++) {
+                if((bit&(1<<i))==0) {
+                    continue;
+                }
+                sum += a[i];
+            }
+            x[bit] = sum;
+        }
+
+        long[] y = new long[1<<b.length];
+        for (int bit = 0; bit < y.length; bit++) {
+            long sum = 0;
+            for (int i = 0; i < b.length; i++) {
+                if((bit&(1<<i))==0) {
+                    continue;
+                }
+                sum += b[i];
+            }
+            y[bit] = sum;
+        }
+        Arrays.sort(x);
+        Arrays.sort(y);
+        for (int i = 0; i < x.length; i++) {
+            int i1 = Arrays.binarySearch(y, K-x[i]);
+            if(i1>=0) {
+                System.out.println("Yes");
+                return;
             }
         }
+        System.out.println("No");
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

@@ -3,29 +3,77 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
-    static int INF = Integer.MAX_VALUE/2;
+public class B21 {
+    static int MOD = 998244353;
+    static long INF = Long.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
+        int[][] xy = new int[N][2];
+        long[] X = new long[N];
+        long[] Y = new long[N];
+        for (int i = 0; i < N; i++) {
+            //xy[i][0]= scanner.nextInt();
+            //xy[i][1]= scanner.nextInt();
+            X[i]= scanner.nextInt();
+            Y[i]= scanner.nextInt();
+        }
+        double[][] dp = new double[1<<N][N];
+        for (int i = 0; i < dp.length; i++) {
+            Arrays.fill(dp[i], INF);
+        }
+        dp[0][0]=0;
+
+        for (int i = 0; i < 1 << N; i++) {
             for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+                if (dp[i][j]>=INF) {
+                    continue;
+                }
+
+                for (int k = 0; k < N; k++) {
+                    if ((i / (1 << k)) % 2 == 1) {
+                        continue;
+                    }
+                    /*
+                    if((i&(1<<k))>0) {
+                        continue;
+                    }
+
+                     */
+                    int nbit = i+(1<<k);
+                    double DIST = Math.sqrt((X[j]-X[k])*(X[j]-X[k]) + (Y[j]-
+                            Y[k])*(Y[j]-Y[k]));
+                    dp[nbit][k]=Math.min(dp[nbit][k], dp[i][j]+DIST);
+                }
             }
         }
+        for (int i = 0; i < dp.length; i++) {
+            //System.out.println(Arrays.toString(dp[i]));
+        }
+        System.out.println((dp[(1<<N)-1][0]));
     }
+
+    private static int dist(int[][] xy, int i, int j) {
+        return (xy[i][0]-xy[j][0])*(xy[i][0]-xy[j][0]) +
+                (xy[i][1]-xy[j][1])*(xy[i][1]-xy[j][1]);
+    }
+
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

@@ -1,31 +1,75 @@
-package tessokubook;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class ABC368F {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
+        for (int i = 0; i < 100; i++) {
+            System.out.println(i);
+            System.out.println(bunkai(i));
+            System.out.println(yakusuu(i));
+            System.out.println();
+        }
+
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int[] a = new int[N];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        List<Long>[] soinnsuu = new List[100009];
+        for (int i = 1; i < soinnsuu.length; i++) {
+            soinnsuu[i]=bunkai(i);
+        }
+        int xorSum = 0;
+        for (int i = 0; i < a.length; i++) {
+            xorSum = xorSum ^ (soinnsuu[a[i]].size());
+        }
+        System.out.println(xorSum==0?"Bruno":"Anna");
+    }
+
+    static List<Long> yakusuu(long N) {
+        List<Long> ret = new ArrayList<>();
+        for (long i = 1; i*i <= N ; i++) {
+            if (N%i==0) {
+                ret.add(i);
+                if (N/i != i) {
+                    ret.add(N/i);
+                }
             }
         }
+        return ret;
+    }
+
+    static List<Long> bunkai(long  N) {
+        long rem = N;
+        List<Long> ret = new ArrayList<>();
+        for (long i = 2; i * i <= N; i++) {
+            while (rem % i == 0) {
+                rem /= i;
+                ret.add(i);
+            }
+        }
+        if (rem != 1) {
+            ret.add(rem);
+        }
+        return ret;
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

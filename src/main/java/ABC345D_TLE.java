@@ -1,149 +1,122 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class ABC345D {
+public class ABC345D_TLE {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static int[] map;
     static int[][] tiles;
     static int N, H, W;
-    static int[][] area;
     static void run (final FastScanner scanner, final PrintWriter out) {
         N = scanner.nextInt();
         H = scanner.nextInt();
         W = scanner.nextInt();
         map = new int[H];
         tiles= new int[N][2];
-        area =new int[H][W];
         for (int i = 0; i < N; i++) {
             tiles[i][0]=scanner.nextInt();
             tiles[i][1]=scanner.nextInt();
         }
-
-        Permutations permutations = new Permutations(N);
-
-        for (int[] perm : permutations.perms) {
-            List<int[]> list = new ArrayList<>();
-            for (int i : perm) {
-                list.add(tiles[i]);
+        for (int bit = 1; bit < 1<<N; bit++) {
+            List<Integer> list = new ArrayList<>();
+            for (int i = 0; i < N; i++) {
+                if ((bit & (1 << i)) > 0) {
+                    list.add(i);
+                }
             }
-            if(rec(0, list, 0)) {
+            int sum = 0;
+            for (Integer i : list) {
+                sum += tiles[i][0] * tiles[i][1];
+            }
+            if (sum != H * W) {
+                continue;
+            }
+            //System.out.println(Integer.toBinaryString(bit));
+            for (int i = 0; i < map.length; i++) {
+                //System.out.println(Arrays.toString(map[i]));
+            }
+            if (rec(list, list.size()-1)) {
                 System.out.println("Yes");
                 return;
             }
         }
         System.out.println("No");
+
     }
 
-    private static boolean rec(int depth,List<int[]> tiles,int sum) {
-        for (int i = 0; i < area.length; i++) {
-            //System.out.println(Arrays.toString(area[i]));
-        }
-        //System.out.println();
-        if(sum==H*W){
+    private static boolean rec(List<Integer> list, int depth) {
+        //System.out.println(depth);
+        if (depth==-1) {
             return true;
         }
-        if(sum > H*W) {
-            return false;
-        }
-        if(depth==tiles.size()) {
-            return false;
-        }
-        int[] tile = tiles.get(depth);
-        int cnt = tile[0]!=tile[1]?2:1;
-        while(cnt-->0) {
-            l:for (int y = 0; y < H; y++) {
-                for (int x = 0; x < W; x++) {
-                    if(area[y][x]==0) {
-                        boolean ok = false;
-                        if(put(y, x, tile, 1)){
-                            ok = rec(depth+1, tiles, sum + tiles.get(depth)[0]*tiles.get(depth)[1]);
+        int tileNum = list.get(depth);
+        for (int i = 0; i < H; i++) {
+            for (int j = 0; j < W; j++) {
+                if ((map[i]&(1<<j))>1) {
+                    continue;
+                }
+                int h = tiles[tileNum][0];
+                int w = tiles[tileNum][1];
+                int mask = 0;
+                for (int k = 0; k < w; k++) {
+                    mask += (1<<(j+k));
+                }
+                if (i+h<=H && j+w<=W) {
+                    if (all0(i, i+h, mask)) {
+                        put(i, i+h, mask);
+                        if (rec(list, depth-1)) {
+                            return true;
                         }
-                        put(y, x, tile, -1);
-                        if(ok) {
-                            return ok;
+                        remove(i, i+h, mask);
+                    }
+                }
+                if (h!=w) {
+                    h = tiles[tileNum][1];
+                    w = tiles[tileNum][0];
+                    mask = 0;
+                    for (int k = 0; k < w; k++) {
+                        mask += (1<<(j+k));
+                    }
+
+                    if (i+h<=H && j+w<=W) {
+                        if (all0(i, i+h, mask)) {
+                            put(i, i+h, mask);
+                            if (rec(list, depth-1)) {
+                                return true;
+                            }
+                            remove(i, i+h, mask);
                         }
-                        break l;
                     }
                 }
             }
-            turnTile(tile);
         }
         return false;
     }
 
-    private static boolean put(int y,int x, int[] tile, int value) {
-        if(y+tile[0]>H || x+tile[1]>W) {
-            return false;
+
+    private static void put(int i0, int i1, int mask) {
+        for (int i = i0; i < i1; i++) {
+            map[i] |= mask;
         }
-        boolean ret = true;
-        for (int i = y; i < y + tile[0]; i++) {
-            for (int j = x; j < x + tile[1]; j++) {
-                area[i][j]+=value;
-                if(area[i][j]>=2) {
-                    ret=false;
-                }
-            }
+    }
+    private static void remove(int i0, int i1, int mask) {
+        for (int i = i0; i < i1; i++) {
+            map[i] -= mask;
         }
-        return ret;
     }
 
-    private static int sum(int[][] tiles, int bit) {
-        int ret = 0;
-        for (int i = 0; i < tiles.length; i++) {
-            if((bit&(1<<i)) == 0) {
-                continue;
-            }
-            ret += tiles[i][0]*tiles[i][1];
-        }
-        return ret;
-    }
-
-
-    private static void turnTile(int[] tile) {
-        int tmp = tile[0];
-        tile[0]=tile[1];
-        tile[1]=tmp;
-    }
-
-    static class Permutations {
-        private int[] perm;
-        private boolean[] used;
-        private int N;
-        ArrayList<int[]> perms = new ArrayList<>();
-
-        public Permutations(int n) {
-            this.N=n;
-            used=new boolean[N];
-            perm=new int[N];
-            perm(0);
-        }
-        private void perm(int depth) {
-            if (depth == N) {
-                int[] idxArr = new int[N];
-                for (int i = 0; i < N; i++) {
-                    idxArr[i] = perm[i];
-                }
-                perms.add(idxArr);
-                return;
-            }
-            for (int i = 0; i < N; i++) {
-                if (used[i]) {
-                    continue;
-                }
-                used[i] = true;
-                perm[depth] = i;
-                perm(depth + 1);
-                used[i] = false;
+    private static boolean all0(int i0,int j0,int mask) {
+        for (int i = i0; i < j0; i++) {
+            if ((map[i]&mask)>0) {
+                return false;
             }
         }
+        return true;
     }
 
     public static void main(final String[] args) {

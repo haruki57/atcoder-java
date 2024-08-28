@@ -6,26 +6,49 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B44 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
+        int[][] a = new int[N][N];
+        for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+                a[i][j]= scanner.nextInt();
             }
         }
+        int Q = scanner.nextInt();
+        int[] perm = new int[N];
+        for (int i = 0; i < perm.length; i++) {
+            perm[i]=i;
+        }
+        while(Q-->0) {
+            int type = scanner.nextInt();
+            int x = scanner.nextInt()-1;
+            int y = scanner.nextInt()-1;
+            if(type==1) {
+                int tmp = perm[x];
+                perm[x]=perm[y];
+                perm[y]=tmp;
+            } else {
+                out.println(a[perm[x]][y]);
+            }
+        }
+
+
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

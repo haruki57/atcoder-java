@@ -3,29 +3,50 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B61 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
         int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
-            }
+        List<Integer>[] g = new List[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i] = new ArrayList<>();
         }
+        for (int i = 0; i < M; i++) {
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            g[a].add(b);
+            g[b].add(a);
+        }
+        int ans = 0;
+        int idx = -1;
+        for (int i = 0; i < g.length; i++) {
+            if(ans < g[i].size()) {
+                ans = Math.max(ans, g[i].size());
+                idx = i+1;
+            }
+
+        }
+        System.out.println(idx);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

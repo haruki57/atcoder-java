@@ -3,29 +3,50 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class C11_TLE_WA {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int K = scanner.nextInt();
+        int[] a = new int[N];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        PriorityQueue<double[]> q = new PriorityQueue<>(new Comparator<double[]>() {
+            @Override
+            public int compare(double[] o1, double[] o2) {
+                return -Double.compare(o1[0], o2[0]);
             }
+        });
+        for (int i = 0; i < N; i++) {
+            q.add(new double[]{a[i], i});
         }
+        int[] cnts = new int[N];
+        while(K-->0) {
+            double[] poll = q.poll();
+            double vote = poll[0];
+            int party = (int)poll[1];
+            cnts[party]++;
+            q.add(new double[]{a[party]/(cnts[party]+1), party});
+        }
+        for (int cnt : cnts) {
+            out.print(cnt+" ");
+        }
+        out.println();
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

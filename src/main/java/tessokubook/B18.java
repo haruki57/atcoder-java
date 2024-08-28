@@ -3,29 +3,61 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B18 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int S = scanner.nextInt();
+        int[] a = new int[N];
+        Arrays.setAll(a, i -> scanner.nextInt());
+        int[][] dp = new int[N+1][S+1];
+        dp[0][0]=1;
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                dp[i][j]=dp[i-1][j];
+                if(j-a[i-1] >= 0) {
+                    dp[i][j]=Math.max(dp[i][j], dp[i-1][j-a[i-1]]);
+                }
             }
         }
+        if(dp[N][S]==0) {
+            System.out.println(-1);
+            return;
+        }
+        List<Integer> answers = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            int ii = N-1-i;
+
+            if (S-a[ii] >= 0 && dp[ii][S-a[ii]]>0) {
+                S-=a[ii];
+                answers.add(ii);
+            }
+        }
+        System.out.println(answers.size());
+        for (Integer answer : answers) {
+            System.out.print((answer+1)+" ");
+        }
+        System.out.println();
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

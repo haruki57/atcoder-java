@@ -6,26 +6,52 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class C07 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
-            }
+        int[] c = new int[N];
+        Arrays.setAll(c, i -> scanner.nextInt());
+        Arrays.sort(c);
+        long[] sum = new long[N];
+        sum[0]=c[0];
+        for (int i = 1; i < c.length; i++) {
+            sum[i]=sum[i-1]+c[i];
         }
+        //sum[sum.length-1]=-1;
+        //sum[sum.length-2]=Long.MAX_VALUE;
+        Arrays.sort(sum);
+        int Q = scanner.nextInt();
+        while(Q-->0) {
+            int x = scanner.nextInt();
+            int ok = -1, ng=sum.length;
+            while(Math.abs(ok-ng)>1) {
+                int mid = (ok+ng)/2;
+                if(sum[mid] <= x) {
+                    ok = mid;
+                } else {
+                    ng = mid;
+                }
+            }
+            System.out.println(ok+1);
+            //out.println(ok);
+        }
+
+
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

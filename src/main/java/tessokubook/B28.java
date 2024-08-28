@@ -6,26 +6,55 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
+public class B28 {
     static int MOD = 1000000007;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        long N = scanner.nextLong();
+        long[][] mat = {{1,1},{1,0}};
+        mat = exp(mat, N, MOD);
+        System.out.println(mat[0][1]);
+    }
+
+    private static long[][] mul(long[][] a, long[][] b, long mod) {
+        int n = a.length;
+        long[][] c = new long[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                for (int k = 0; k < n; k++) {
+                    c[i][j] = (c[i][j] + (a[i][k] * b[k][j] % mod)) % mod;
+                }
             }
         }
+        return c;
     }
+
+    private static long[][] exp(long[][] a, long b, long mod) {
+        int n = a.length;
+        long[][] res = new long[n][n];
+        for (int i = 0; i < n; i++) {
+            res[i][i] = 1;
+        }
+        while (b > 0) {
+            if ((b & 1) > 0) res = mul(res, a, mod);
+            a = mul(a, a, mod);
+            b >>= 1;
+        }
+        return res;
+    }
+
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

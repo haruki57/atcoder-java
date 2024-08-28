@@ -4,28 +4,96 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B42 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int[][] a = new int[N][2];
+        for (int i = 0; i < N; i++) {
+            a[i][0]= scanner.nextInt();
+            a[i][1]= scanner.nextInt();
+        }
+        long ans = Long.MIN_VALUE;
+        // plus, plus
+        long sum0 = 0;
+        long sum1 = 0;
+        for (int i = 0; i < a.length; i++) {
+            if(a[i][0]+a[i][1]>0) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
             }
         }
+        ans = Math.max(ans, Math.abs(sum0)+Math.abs(sum1));
+
+        // minus, minus
+        sum0 = 0;
+        sum1 = 0;
+        for (int i = 0; i < a.length; i++) {
+            if(a[i][0]+a[i][1]<0) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            }
+        }
+        ans = Math.max(ans, Math.abs(sum0)+Math.abs(sum1));
+
+        // plus, minus
+        sum0 = 0;
+        sum1 = 0;
+        for (int i = 0; i < a.length; i++) {
+            if(a[i][0]>=0&&a[i][1]<=0) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            } else if(a[i][0]>=0&&a[i][1]>=0&&a[i][0]>a[i][1]) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            } else if(a[i][0]<=0&&a[i][1]<=0&&Math.abs(a[i][0])<Math.abs(a[i][1])) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            }
+        }
+        ans = Math.max(ans, Math.abs(sum0)+Math.abs(sum1));
+
+        // plus, minus
+        for (int i = 0; i < a.length; i++) {
+            int tmp = a[i][0];
+            a[i][0]=a[i][1];
+            a[i][1]=tmp;
+        }
+
+        sum0 = 0;
+        sum1 = 0;
+        for (int i = 0; i < a.length; i++) {
+            if(a[i][0]>=0&&a[i][1]<=0) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            } else if(a[i][0]>=0&&a[i][1]>=0&&a[i][0]>a[i][1]) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            } else if(a[i][0]<=0&&a[i][1]<=0&&Math.abs(a[i][0])<Math.abs(a[i][1])) {
+                sum0+=a[i][0];
+                sum1+=a[i][1];
+            }
+        }
+        ans = Math.max(ans, Math.abs(sum0)+Math.abs(sum1));
+
+        System.out.println(ans);
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

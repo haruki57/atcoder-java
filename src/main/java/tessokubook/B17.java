@@ -1,31 +1,67 @@
 package tessokubook;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B17 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int[] h = new int[N];
+        Arrays.setAll(h, i -> scanner.nextInt());
+        if(N==2) {
+            System.out.println(2);
+            System.out.println("1 2");
+            return;
+        }
+        long[] dp = new long[h.length];
+        int[] prev = new int[h.length];
+        dp[1]=Math.abs(h[0]-h[1]);
+        for (int i = 2; i < dp.length; i++) {
+            long prev1 = dp[i - 1] + Math.abs(h[i] - h[i - 1]);
+            long prev2 = dp[i - 2] + Math.abs(h[i] - h[i - 2]);
+            if(prev2 > prev1) {
+                dp[i]= prev1;
+                prev[i]=i-1;
+            } else {
+                dp[i]= prev2;
+                prev[i]=i-2;
             }
         }
+        //System.out.println(Arrays.toString(dp));
+        List<Integer> path = new ArrayList<>();
+        int cur = N-1;
+        path.add(cur);
+        while(cur > 0) {
+            cur = prev[cur];
+            path.add(cur);
+        }
+        out.println(path.size());
+        for (int i = 0; i < path.size(); i++) {
+            out.print((path.get(path.size()-1-i)+1)+" ");
+        }
+        out.println();
+
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

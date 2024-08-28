@@ -3,20 +3,32 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B55 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int Q = scanner.nextInt();
+        TreeSet<Integer> set = new TreeSet<>();
+        while(Q-->0) {
+            int type= scanner.nextInt();
+            int x= scanner.nextInt();
+            if(type==1) {
+                set.add(x);
+            } else {
+                Integer higher = set.higher(x);
+                Integer lower = set.lower(x);
+                if(higher==null&&lower==null) {
+                    out.println(-1);
+                } else if(higher==null) {
+                    out.println(Math.abs(lower-x));
+                } else if(lower==null) {
+                    out.println(Math.abs(higher-x));
+                } else {
+                    out.println(Math.min(Math.abs(higher-x), Math.abs(lower-x)));
+                }
             }
         }
     }
@@ -24,8 +36,13 @@ public class A23 {
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

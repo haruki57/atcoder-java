@@ -3,29 +3,81 @@ package tessokubook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B65 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
+    static int[] level;
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int T = scanner.nextInt()-1;
+        List<Integer>[] g = new List[N];
+        for (int i = 0; i < g.length; i++) {
+            g[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < N - 1; i++) {
+            int a = scanner.nextInt()-1;
+            int b = scanner.nextInt()-1;
+            g[a].add(b);
+            g[b].add(a);
+        }
+        Queue<Integer> q = new LinkedList<>();
+        q.add(T);
+        level = new int[N];
+        rec(g, T, -1);
+        for (int i = 0; i < N; i++) {
+            out.print(level[i]+" ");
+        }
+        out.println();
+
+        /*
+        int[] parent = new int[N];
+        Arrays.fill(level, -1);
+        parent[T]=-1;
+        level[T]=0;
+        int maxLevel = 0;
+        while(!q.isEmpty()) {
+            int cur = q.poll();
+            int nextLevel = level[cur]+1;
+            maxLevel = Math.max(maxLevel, nextLevel);
+            for (Integer next : g[cur]) {
+                if(level[next]!=-1) {
+                    continue;
+                }
+                parent[next]=cur;
+                level[next]=nextLevel;
+                q.add(next);
             }
         }
+        for (int i = 0; i < N; i++) {
+            out.print((maxLevel-level[i]-1)+" ");
+        }
+
+         */
+    }
+    static int rec(List<Integer>[] g, int cur, int prev) {
+        int ret = 0;
+        for (Integer next : g[cur]) {
+            if(next==prev) {
+                continue;
+            }
+            ret = Math.max(ret, rec(g, next, cur)+1);
+        }
+        return level[cur]=ret;
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

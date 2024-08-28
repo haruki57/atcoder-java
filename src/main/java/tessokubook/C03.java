@@ -6,17 +6,31 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class C03 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        int D = scanner.nextInt();
+        long X = scanner.nextInt();
+        int[] x = new int[D-1];
+        Arrays.setAll(x, i -> scanner.nextInt());
+        long[] price = new long[D];
+        price[0]=X;
+        for (int i = 1; i <= x.length; i++) {
+            price[i] = price[i-1]+x[i-1];
+        }
+        //System.out.println(Arrays.toString(price));
+        int Q = scanner.nextInt();
+        while(Q-->0) {
+            int s = scanner.nextInt()-1;
+            int t = scanner.nextInt()-1;
+            if(price[s]==price[t]) {
+                out.println("Same");
+            } else if(price[s]<price[t]){
+                out.println(t+1);
+            } else {
+                out.println(s+1);
             }
         }
     }
@@ -24,8 +38,13 @@ public class A23 {
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

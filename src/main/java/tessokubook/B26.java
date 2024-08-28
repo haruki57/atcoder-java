@@ -6,26 +6,38 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B26 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        boolean[] isPrime = new boolean[N+1];
+        Arrays.fill(isPrime, true);
+        isPrime[0]=isPrime[1]=false;
+        for (int i = 0; i*i < isPrime.length; i++) {
+            if(isPrime[i]) {
+                for (int j = i+i; j < isPrime.length; j+=i) {
+                    isPrime[j]=false;
+                }
             }
+        }
+        for (int i = 0; i < isPrime.length; i++) {
+            if(isPrime[i])
+                out.println(i);
         }
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {

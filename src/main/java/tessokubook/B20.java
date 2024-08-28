@@ -6,26 +6,53 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class A23 {
-    static int MOD = 1000000007;
+public class B20 {
+    static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
-        int N = scanner.nextInt();
-        int M = scanner.nextInt();
-        int[][] a = new int[M][N];
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                a[i][j]= scanner.nextInt();;
+        char[] s = scanner.next().toCharArray();
+        char[] t = scanner.next().toCharArray();
+        int N = s.length;
+        int M =t.length;
+
+        int[][] dp = new int[N+1][M+1];
+        for (int i = 0; i <= N; i++) {
+            for (int j = 0; j <= M; j++) {
+                if(i==0&&j==0) {
+                    continue;
+                }
+                if(i==0&&j>0){
+                    dp[i][j]=dp[i][j-1]+1;
+                } else if(i>0&&j==0){
+                    dp[i][j]=dp[i-1][j]+1;
+                } else {
+                    if(s[i-1]==t[j-1]) {
+                        dp[i][j]=min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]);
+                    } else {
+                        dp[i][j]=min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+1);
+                    }
+                }
+
             }
         }
+        System.out.println(dp[N][M]);
+    }
+
+    static int min(int a,int b,int c) {
+        return Math.min(a, Math.min(b, c));
     }
 
     public static void main(final String[] args) {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner scanner = new FastScanner();
-        run(scanner, out);
-        out.flush();
+        try {
+            run(scanner, out);
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            out.flush();
+        }
     }
 
     static class FastScanner {
