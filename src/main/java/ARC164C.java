@@ -1,53 +1,39 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
 
-public class ABC362E_2 {
+public class ARC164C {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
-
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        long[] a = new long[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        long[][][] dp = new long[N][N][N + 1];
-        for (int i = N-1; i >= 0; i--) {
-            for (int j = i + 1; j < N; j++) {
-                dp[i][j][2] += 1;
-                for (int l = 2; l < N; l++) {
-                    for (int k = j + 1; k < N; k++) {
-                        if (a[j] - a[i] == a[k] - a[j]) {
-                            dp[i][j][l+1] += dp[j][k][l];
-                            dp[i][j][l+1] %= MOD;
-                        }
-                    }
-                }
+        int[][] a = new int[N][2];
+        long sum = 0;
+        int frontBigger = 0;
+        for (int i = 0; i < a.length; i++) {
+            a[i][0]= scanner.nextInt();
+            a[i][1]= scanner.nextInt();
+            if(a[i][0]>a[i][1]) {
+                frontBigger++;
             }
         }
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                //System.out.println(Arrays.toString(dp[i][j]));
+        if(frontBigger%2==0) {
+            for (int i = 0; i < N; i++) {
+                sum += Math.max(a[i][0], a[i][1]);
             }
-            //System.out.println();
-        }
-
-
-        long[] ans = new long[N + 1];
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                for (int l = 2; l <= N; l++) {
-                    ans[l]+=dp[i][j][l];
-                    ans[l]%=MOD;
-                }
+            System.out.println(sum);
+        } else {
+            Arrays.sort(a, Comparator.comparingInt(o -> Math.abs(o[0] - o[1])));
+            sum += Math.min(a[0][0], a[0][1]);
+            for (int i = 1; i < N; i++) {
+                sum += Math.max(a[i][0], a[i][1]);
             }
+            System.out.println(sum);
         }
-        ans[1]=N;
-        for (int i = 1; i <= N; i++) {
-            out.print(ans[i]+" ");
-        }
-        out.println();
     }
 
     public static void main(final String[] args) {

@@ -3,51 +3,95 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class ABC362E_2 {
+public class ABC125C {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
-
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        long[] a = new long[N];
+        int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
-        long[][][] dp = new long[N][N][N + 1];
+        if(N==2) {
+            System.out.println(Math.max(a[0], a[1]));
+            return;
+        }
+        long[] gcds = new long[N];
+
+        for (int i = 0; i < N; i++) {
+            if(i==0) {
+                gcds[i]=a[i];
+            } else {
+                gcds[i]=gcd(gcds[i-1], a[i]);
+            }
+        }
+        long[] gcdsRe = new long[N];
         for (int i = N-1; i >= 0; i--) {
-            for (int j = i + 1; j < N; j++) {
-                dp[i][j][2] += 1;
-                for (int l = 2; l < N; l++) {
-                    for (int k = j + 1; k < N; k++) {
-                        if (a[j] - a[i] == a[k] - a[j]) {
-                            dp[i][j][l+1] += dp[j][k][l];
-                            dp[i][j][l+1] %= MOD;
-                        }
-                    }
+            if(i==N-1) {
+                gcdsRe[i]=a[i];
+            } else {
+                gcdsRe[i]=gcd(gcdsRe[i+1], a[i]);
+            }
+        }
+
+        //System.out.println(Arrays.toString(gcds));
+        //System.out.println(Arrays.toString(gcdsRe));
+
+        long ans = 1;
+        for (int i = 1; i < N-1; i++) {
+            long gcd = gcd(gcds[i-1], gcdsRe[i+1]);
+            ans = Math.max(ans, gcd);
+        }
+        ans = Math.max(ans, gcds[N-2]);
+        ans = Math.max(ans, gcdsRe[1]);
+        System.out.println(ans);
+        //ansTLE(N, a);
+    }
+
+    static long gcd(long x, long y) {
+        if (x<y) {
+            long tmp = x;
+            x = y;
+            y = tmp;
+        }
+        if (x%y==0) {
+            return y;
+        }
+
+        return gcd(y, x % y);
+    }
+
+
+    private static void ansTLE(int N, int[] a) {
+        Map<Long, Integer> cnts = new HashMap<>();
+        for (int i = 0; i < N; i++) {
+            for (Long l : yakusuu(a[i])) {
+                cnts.put(l, cnts.getOrDefault(l, 0) + 1);
+            }
+        }
+        long ans = 1;
+        for (Map.Entry<Long, Integer> longIntegerEntry : cnts.entrySet()) {
+            Long yakusuu = longIntegerEntry.getKey();
+            int cnt = longIntegerEntry.getValue();
+            if(cnt >= N -1) {
+                ans = Math.max(ans, yakusuu);
+            }
+        }
+        System.out.println(ans);
+    }
+
+
+    static ArrayList<Long> yakusuu(long N) {
+        ArrayList<Long> ret = new ArrayList<>();
+        for (long i = 1; i*i <= N ; i++) {
+            if (N%i==0) {
+                ret.add(i);
+                if (N/i != i) {
+                    ret.add(N/i);
                 }
             }
         }
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                //System.out.println(Arrays.toString(dp[i][j]));
-            }
-            //System.out.println();
-        }
-
-
-        long[] ans = new long[N + 1];
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                for (int l = 2; l <= N; l++) {
-                    ans[l]+=dp[i][j][l];
-                    ans[l]%=MOD;
-                }
-            }
-        }
-        ans[1]=N;
-        for (int i = 1; i <= N; i++) {
-            out.print(ans[i]+" ");
-        }
-        out.println();
+        Collections.sort(ret);
+        return ret;
     }
 
     public static void main(final String[] args) {

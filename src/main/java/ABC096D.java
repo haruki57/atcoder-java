@@ -1,51 +1,43 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-public class ABC362E_2 {
+public class ABC096D {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
-
     static void run (final FastScanner scanner, final PrintWriter out) {
         int N = scanner.nextInt();
-        long[] a = new long[N];
-        Arrays.setAll(a, i -> scanner.nextInt());
-        long[][][] dp = new long[N][N][N + 1];
-        for (int i = N-1; i >= 0; i--) {
-            for (int j = i + 1; j < N; j++) {
-                dp[i][j][2] += 1;
-                for (int l = 2; l < N; l++) {
-                    for (int k = j + 1; k < N; k++) {
-                        if (a[j] - a[i] == a[k] - a[j]) {
-                            dp[i][j][l+1] += dp[j][k][l];
-                            dp[i][j][l+1] %= MOD;
-                        }
-                    }
+        boolean[] isPrime = new boolean[55556];
+        Arrays.fill(isPrime, true);
+        isPrime[0]=isPrime[1]=false;
+        for (int i = 0; i < isPrime.length; i++) {
+            if(isPrime[i]) {
+                for (int j = i+i; j < isPrime.length; j+=i) {
+                    isPrime[j]=false;
                 }
             }
         }
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                //System.out.println(Arrays.toString(dp[i][j]));
-            }
-            //System.out.println();
-        }
-
-
-        long[] ans = new long[N + 1];
-        for (int i = 0; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                for (int l = 2; l <= N; l++) {
-                    ans[l]+=dp[i][j][l];
-                    ans[l]%=MOD;
+        int cnt = 0;
+        List<Integer> list = new ArrayList<>();
+        int[] a = new int[5];
+        for (int i = 0; i < isPrime.length; i++) {
+            if(isPrime[i]){
+                cnt++;
+                a[i%5]++;
+                if(i%5==1) {
+                    list.add(i);
                 }
             }
         }
-        ans[1]=N;
-        for (int i = 1; i <= N; i++) {
-            out.print(ans[i]+" ");
+        //System.out.println(cnt);
+        //System.out.println(Arrays.toString(a));
+        for (int i = 0; i < N; i++) {
+            out.print(list.get(i)+" ");
         }
         out.println();
     }
