@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class ABC241E {
@@ -13,22 +15,46 @@ public class ABC241E {
         long K = scanner.nextLong();
         int[] a = new int[N];
         Arrays.setAll(a, i -> scanner.nextInt());
-        long[][] dp = new long[41][N];
-        for (int i = 0; i < N; i++) {
-            dp[0][i]=a[i];
+        if(K <= 10000000L) {
+            long x = 0;
+            for (int i = 0; i < K; i++) {
+                int mod = (int)(x%N);
+                x += a[mod];
+            }
+            System.out.println(x);
+            return;
         }
-        for (int i = 1; i < dp.length; i++) {
-            for (int j = 0; j < dp[i].length; j++) {
-                dp[i][j]=dp[i-1][j] + dp[i-1][(int)((j+dp[i-1][j])%N)];
+        long x = 0;
+        int[] next = new int[N];
+        Arrays.fill(next, -1);
+        long cnt = 0;
+        int idx = -1;
+        for (int i = 0; i < K; i++) {
+            int mod = (int)(x%N);
+            if(next[mod]!=-1){
+                idx = mod;
+                break;
+            }
+            x += a[mod];
+            next[mod]=(int)(x%N);
+            cnt++;
+        }
+        long subSum = 0;
+        List<Integer> list = new ArrayList<>();
+        while(true) {
+            list.add(idx);
+            idx = next[idx];
+            subSum += a[idx];
+            if(list.get(0) == idx) {
+                break;
             }
         }
-        long ans = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if((K&(1L<<i))>0) {
-                ans += dp[i][(int)(ans%N)];
-            }
+        K -= cnt;
+        x += subSum * (K/list.size());
+        for (int i = 0; i < K % list.size(); i++) {
+            x += a[list.get(i)];
         }
-        System.out.println(ans);
+        System.out.println(x);
     }
 
     public static void main(final String[] args) {
@@ -63,6 +89,7 @@ public class ABC241E {
                 }
             }
             return true;
+
         }
         private int readByte() { if (hasNextByte()) return buffer[ptr++]; else return -1;}
         private static boolean isPrintableChar(int c) { return 33 <= c && c <= 126;}
