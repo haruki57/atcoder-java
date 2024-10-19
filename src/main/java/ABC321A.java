@@ -4,14 +4,14 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class ABC323A {
+public class ABC321A {
     static int MOD = 998244353;
     static int INF = Integer.MAX_VALUE/2;
 
     static void run (final FastScanner scanner, final PrintWriter out) {
         char[] s = scanner.next().toCharArray();
-        for (int i = 1; i < s.length; i+=2) {
-            if(s[i]=='1') {
+        for (int i = 0; i < s.length - 1; i++) {
+            if(s[i+1]>=s[i]) {
                 System.out.println("No");
                 return;
             }
